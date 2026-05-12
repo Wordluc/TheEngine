@@ -34,7 +34,8 @@ func (c *Camera) SetResolution(w, h int32) {
 	c.view = rl.LoadRenderTexture(w, h)
 }
 
-func (c *Camera) StartRendering() {
+func (c *Camera) StartRendering(pos base.Vec[float32]) {
+	c.camera.Target = rl.Vector2{X: pos.X, Y: pos.Y}
 	rl.BeginTextureMode(c.view)
 	rl.ClearBackground(rl.White)
 	rl.BeginMode2D(*c.camera)

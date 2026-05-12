@@ -43,7 +43,7 @@ func main() {
 			rl.ToggleFullscreen()
 		}
 
-		camera.StartRendering()
+		camera.StartRendering(b.CastVec[int32, float32](b.Vec[int32]{}))
 
 		ball.Draw()
 		DrawHitbox(&ball)

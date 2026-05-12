@@ -39,3 +39,10 @@ func (v *Vec[t]) SubScalars(x, y t) {
 	v.X -= x
 	v.Y -= y
 }
+
+func CastVec[from, to number](a Vec[from]) Vec[to] {
+	return Vec[to]{
+		X: to(a.X),
+		Y: to(a.Y),
+	}
+}
