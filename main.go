@@ -52,7 +52,7 @@ func main() {
 		DrawHitbox(&ball)
 
 		camera.StopRendering()
-		ball.MoveBy(GetVecForKeyboard())
+		ball.MoveBy(GetVecForKeyboard(20))
 
 	}
 }
