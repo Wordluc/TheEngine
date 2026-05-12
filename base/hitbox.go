@@ -1,7 +1,7 @@
 package base
 
 type Hitbox struct {
-	*Vec
+	*Vec[int32]
 }
 
 func NewHitbox(w, h int32) Hitbox {

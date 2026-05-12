@@ -1,20 +1,20 @@
 package main
 
 import (
-	b "game/object/base"
+	b "game/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func GetVecForKeyboard() b.Vec {
+func GetVecForKeyboard() b.Vec[int32] {
 	if rl.IsKeyDown(rl.KeyD) {
-		return b.NewVec(1, 0)
+		return b.NewVec[int32](1, 0)
 	} else if rl.IsKeyDown(rl.KeyA) {
-		return b.NewVec(-1, 0)
+		return b.NewVec[int32](-1, 0)
 	} else if rl.IsKeyDown(rl.KeyW) {
-		return b.NewVec(0, -1)
+		return b.NewVec[int32](0, -1)
 	} else if rl.IsKeyDown(rl.KeyS) {
-		return b.NewVec(0, 1)
+		return b.NewVec[int32](0, 1)
 	}
-	return b.Vec{}
+	return b.Vec[int32]{}
 }

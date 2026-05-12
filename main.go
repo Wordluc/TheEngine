@@ -1,43 +1,55 @@
 package main
 
 import (
-	b "game/object/base"
+	"game/base"
+	b "game/base"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
 
-const W_WINDOW = 1200
-const H_WINDOW = 700
+const (
+	W_WINDOW = 1200
+	H_WINDOW = 700
+)
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
-	//	rl.ToggleFullscreen()
 
 	ball := NewBall(10)
-	ball.MoveTo(b.NewVec(40, 40))
-	target := rl.LoadRenderTexture(W_WINDOW, H_WINDOW)
+	ball.MoveTo(b.NewVec[int32](40, 40))
+
+	camera := NewCamera(base.Vec[int32]{
+		X: 320,
+		Y: 180,
+	}, base.Vec[int32]{
+		X: 320,
+		Y: 180,
+	})
+
 	for {
 		if rl.WindowShouldClose() {
 			return
 		}
-		{
-			rl.BeginTextureMode(target)
-			rl.ClearBackground(rl.White)
-			ball.Draw()
-			DrawHitbox(&ball)
-			rl.EndTextureMode()
+
+		if rl.IsKeyPressed(rl.KeyF1) {
+			camera.SetResolution(320, 180)
 		}
 
-		rl.BeginDrawing()
-		rl.DrawTexturePro(
-			target.Texture,
-			rl.Rectangle{X: 0, Y: 0, Width: W_WINDOW, Height: -H_WINDOW},
-			rl.Rectangle{X: 0, Y: 0, Width: float32(rl.GetScreenWidth()), Height: float32(rl.GetScreenHeight())},
-			rl.Vector2{X: 0, Y: 0},
-			0.0,
-			rl.White,
-		)
+		if rl.IsKeyPressed(rl.KeyF2) {
+			camera.SetResolution(640, 360)
+		}
+
+		if rl.IsKeyPressed(rl.KeyF11) {
+			rl.ToggleFullscreen()
+		}
+
+		camera.StartRendering()
+
+		ball.Draw()
+		DrawHitbox(&ball)
+
+		camera.StopRendering()
+
 		ball.MoveBy(GetVecForKeyboard())
-		rl.EndDrawing()
 	}
 }

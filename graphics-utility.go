@@ -1,7 +1,7 @@
 package main
 
 import (
-	"game/object/base"
+	"game/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )

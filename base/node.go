@@ -3,16 +3,16 @@ package base
 type Node struct {
 	objects []Object
 	nodes   []Node
-	pos     *Vec
+	pos     *Vec[int32]
 }
 
-func NewNode(p *Vec) Node {
+func NewNode(p *Vec[int32]) Node {
 	return Node{
 		pos: p,
 	}
 }
 
-func (n *Node) MoveTo(v Vec) {
+func (n *Node) MoveTo(v Vec[int32]) {
 	xNode, yNode := v.Get()
 	xDest, yDest := v.Get()
 	diffX, diffY := xDest-xNode, yDest-yNode
@@ -22,7 +22,7 @@ func (n *Node) MoveTo(v Vec) {
 	})
 }
 
-func (n *Node) MoveBy(v Vec) {
+func (n *Node) MoveBy(v Vec[int32]) {
 	n.ForEachObjects(func(o Object) error {
 		o.GetPos().Add(v)
 		return nil
