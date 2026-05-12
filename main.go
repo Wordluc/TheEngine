@@ -16,7 +16,9 @@ func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 
 	ball := NewBall(10)
-	ball.MoveTo(b.NewVec[int32](40, 40))
+	ball.MoveTo(b.NewVec[float32](40, 40))
+
+	wall := NewSquare(20)
 
 	camera := NewCamera(base.Vec[int32]{
 		X: 320,
@@ -25,7 +27,7 @@ func main() {
 		X: 320,
 		Y: 180,
 	})
-
+	rl.SetTargetFPS(1000)
 	for {
 		if rl.WindowShouldClose() {
 			return
@@ -46,10 +48,11 @@ func main() {
 		camera.StartRendering(b.CastVec[int32, float32](b.Vec[int32]{}))
 
 		ball.Draw()
+		wall.Draw()
 		DrawHitbox(&ball)
 
 		camera.StopRendering()
-
 		ball.MoveBy(GetVecForKeyboard())
+
 	}
 }

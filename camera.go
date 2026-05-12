@@ -29,7 +29,6 @@ func NewCamera(sizeView base.Vec[int32], resolution base.Vec[int32]) Camera {
 func (c *Camera) SetResolution(w, h int32) {
 	c.resolution = base.Vec[int32]{X: w, Y: h}
 	c.camera.Zoom = float32(c.resolution.X / c.sizeView.X)
-	c.camera.Offset = rl.Vector2{X: float32(c.resolution.X) / 2, Y: float32(c.resolution.Y) / 2}
 	rl.UnloadRenderTexture(c.view)
 	c.view = rl.LoadRenderTexture(w, h)
 }

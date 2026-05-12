@@ -11,5 +11,5 @@ func DrawHitbox(o base.Object) {
 	pos := o.GetPos()
 	x, y := pos.Get()
 	w, h := size.Get()
-	rl.DrawRectangleLinesEx(rl.Rectangle{X: float32(x), Y: float32(y), Width: float32(w), Height: float32(h)}, 1, rl.Red)
+	rl.DrawRectangleLinesEx(rl.Rectangle{X: float32(int32(x)), Y: float32(int32(y)), Width: float32(w), Height: float32(h)}, 1, rl.Red)
 }

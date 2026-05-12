@@ -2,8 +2,8 @@ package base
 
 type Object interface {
 	GetHitbox() *Hitbox
-	MoveTo(Vec[int32])
-	MoveBy(Vec[int32])
-	GetPos() *Vec[int32]
+	MoveTo(Vec[float32])
+	MoveBy(Vec[float32])
+	GetPos() *Vec[float32]
 	Draw()
 }
