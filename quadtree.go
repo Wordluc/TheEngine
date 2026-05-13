@@ -45,7 +45,6 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		q.Elements = append(q.Elements, e)
 		return nil
 	}
-	fmt.Printf("Reallocate %v\n", e.GetPos())
 
 	xQ, yQ := q.Pos.Get()
 	wQ, hQ := q.Size.Get()
@@ -85,7 +84,6 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 
 	elementsToReallocate := append(q.Elements, e)
 	q.Elements = make([]QuadTreeElement[float32], 0)
-	fmt.Println(centerX, centerY)
 	for i := range elementsToReallocate {
 		e := elementsToReallocate[i]
 		x, y := e.GetPos().Get()
@@ -103,7 +101,6 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		if x+w > centerX && y+h > centerY {
 			quadtreeToCreate = append(quadtreeToCreate, BOTTOM_RIGHT)
 		}
-		fmt.Printf("%v -> %v\n", elementsToReallocate[i].GetPos(), quadtreeToCreate)
 		if len(quadtreeToCreate) == 0 {
 			return errors.New("Error inserting elements, could not find inserting quadtree")
 		}

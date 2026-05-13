@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"game/base"
 	"testing"
 )
@@ -102,13 +101,9 @@ func TestInsert_4Element(t *testing.T) {
 		t.Errorf("3 Elements should  be stored in the top_left quadtree")
 	}
 
-	if len(q.Top_right.Elements) != 1 {
+	if len(q.Bottom_left.Elements) != 1 {
 		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
 	}
-}
-func print(st *QuadTree) {
-	b, _ := json.Marshal(st)
-	println("df", string(b))
 }
 
 // Root [0,0 → 50×50]
@@ -150,13 +145,18 @@ func TestInsert_5Element_SplitTopLeft(t *testing.T) {
 	if len(q.Elements) != 0 {
 		t.Errorf("Element should't  be stored in the root quadtree")
 	}
-
-	if len(q.Top_left.Elements) != 0 {
-		t.Errorf("3 Elements should  be stored in the top_left quadtree")
+	if len(q.Top_left.Top_left.Elements) != 2 {
+		t.Errorf("2 Elements should  be stored in the top_left->top_left quadtree")
+	}
+	if len(q.Top_left.Top_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->top_right quadtree")
+	}
+	if len(q.Top_left.Bottom_left.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->bottom_left quadtree")
 	}
 
-	if len(q.Top_right.Elements) != 1 {
-		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
+	if len(q.Top_left.Bottom_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->bottom_right quadtree")
 	}
 }
 
@@ -198,16 +198,22 @@ func TestInsert_5Element_ElementIsInMoreQuadtree(t *testing.T) {
 		}
 	}
 
-	print(q)
 	if len(q.Elements) != 0 {
-		t.Errorf("Element should't  be stored in the root quadtree")
+		t.Errorf("Element should's be stored in root")
 	}
-
-	if len(q.Top_left.Elements) != 0 {
-		t.Errorf("3 Elements should  be stored in the top_left quadtree")
+	if len(q.Top_left.Elements) != 1 {
+		t.Errorf("1 Element should be stored in root top_left")
 	}
-
-	if len(q.Top_right.Elements) != 1 {
-		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
+	if len(q.Top_left.Top_left.Elements) != 2 {
+		t.Errorf("3 Elements should  be stored in the top_left->top_left quadtree")
+	}
+	if len(q.Top_left.Top_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->top_right quadtree")
+	}
+	if len(q.Top_left.Bottom_left.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->bottom_left quadtree")
+	}
+	if len(q.Top_left.Bottom_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the top_left->bottom_right quadtree")
 	}
 }
