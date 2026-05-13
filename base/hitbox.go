@@ -1,11 +1,15 @@
 package base
 
 type Hitbox struct {
-	*Vec[int32]
+	Box      *Vec[int32]
+	IsActive bool
+	o        Object
 }
 
-func NewHitbox(w, h int32) Hitbox {
+func NewHitbox(o Object, w, h int32) Hitbox {
 	return Hitbox{
-		new(NewVec(w, h)),
+		Box:      new(NewVec(w, h)),
+		IsActive: true,
+		o:        o,
 	}
 }

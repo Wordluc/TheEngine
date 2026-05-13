@@ -13,7 +13,7 @@ type Ball struct {
 }
 
 func NewBall(r int32) (b Ball) {
-	b.hitbox = new(base.NewHitbox(r*2, r*2))
+	b.hitbox = new(base.NewHitbox(&b, r*2, r*2))
 	b.r = float32(r)
 	b.pos = new(base.Vec[float32])
 	return b
@@ -42,14 +42,14 @@ func (b *Ball) Draw() {
 
 type Square struct {
 	hitbox *base.Hitbox
-	pos    *base.Vec[int32]
+	pos    *base.Vec[float32]
 	l      float32
 }
 
 func NewSquare(l int32) (b Square) {
-	b.hitbox = new(base.NewHitbox(l, l))
+	b.hitbox = new(base.NewHitbox(&b, l, l))
 	b.l = float32(l)
-	b.pos = new(base.Vec[int32])
+	b.pos = new(base.Vec[float32])
 	return b
 }
 
@@ -57,19 +57,19 @@ func (b *Square) GetHitbox() *base.Hitbox {
 	return b.hitbox
 }
 
-func (b *Square) MoveTo(v base.Vec[int32]) {
+func (b *Square) MoveTo(v base.Vec[float32]) {
 	b.pos = new(v)
 }
 
-func (b *Square) MoveBy(v base.Vec[int32]) {
+func (b *Square) MoveBy(v base.Vec[float32]) {
 	b.pos.Add(v)
 }
 
-func (b *Square) GetPos() *base.Vec[int32] {
+func (b *Square) GetPos() *base.Vec[float32] {
 	return b.pos
 }
 
 func (b *Square) Draw() {
 	x, y := b.pos.Get()
-	rl.DrawRectangle(x, y, int32(b.l), int32(b.l), rl.Black)
+	rl.DrawRectangle(int32(x), int32(y), int32(b.l), int32(b.l), rl.Black)
 }

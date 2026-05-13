@@ -18,7 +18,7 @@ func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 
 	ball := NewBall(10)
-	ball.MoveTo(b.NewVec[float32](40, 40))
+	ball.MoveTo(b.NewVec[float32](1260, 40))
 
 	wall := NewSquare(20)
 

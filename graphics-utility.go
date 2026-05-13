@@ -7,9 +7,12 @@ import (
 )
 
 func DrawHitbox(o base.Object) {
-	size := o.GetHitbox()
+	hitBox := o.GetHitbox()
+	if hitBox.IsActive {
+		return
+	}
 	pos := o.GetPos()
 	x, y := pos.Get()
-	w, h := size.Get()
+	w, h := hitBox.Box.Get()
 	rl.DrawRectangleLinesEx(rl.Rectangle{X: float32(int32(x)), Y: float32(int32(y)), Width: float32(w), Height: float32(h)}, 1, rl.Red)
 }
