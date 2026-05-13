@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"game/base"
 	"testing"
 )
@@ -10,20 +11,20 @@ import (
 // ---------------------------------------------------------------------------
 
 type MockElement struct {
-	pos base.Vec[float32] // top-left corner
-	box base.Vec[float32] // width, height
+	Pos base.Vec[float32] // top-left corner
+	Box base.Vec[float32] // width, height
 	qt  *QuadTree
 }
 
-func (m *MockElement) GetPos() base.Vec[float32] { return m.pos }
-func (m *MockElement) GetBox() base.Vec[float32] { return m.box }
+func (m *MockElement) GetPos() base.Vec[float32] { return m.Pos }
+func (m *MockElement) GetBox() base.Vec[float32] { return m.Box }
 func (m *MockElement) SetQuadTree(q *QuadTree)   { m.qt = q }
 
 // helper to build a MockElement at (x,y) with size (w,h)
 func elem(x, y, w, h float32) *MockElement {
 	return &MockElement{
-		pos: base.Vec[float32]{X: x, Y: y},
-		box: base.Vec[float32]{X: w, Y: h},
+		Pos: base.Vec[float32]{X: x, Y: y},
+		Box: base.Vec[float32]{X: w, Y: h},
 	}
 }
 
@@ -33,7 +34,7 @@ func elem(x, y, w, h float32) *MockElement {
 // ---------------------------------------------------------------------------
 
 func rootTree() *QuadTree {
-	center := base.Vec[float32]{X: 25, Y: 25}
+	center := base.Vec[float32]{X: 0, Y: 0}
 	size := base.Vec[float32]{X: 50, Y: 50}
 	return NewQuadTree(center, size, nil)
 }
@@ -49,195 +50,164 @@ func TestNewQuadTree_InitialisedCorrectly(t *testing.T) {
 	}
 }
 
-// ---------------------------------------------------------------------------
-// 2. Insert – element lands entirely in TOP_LEFT quadrant
-//    Quadrant boundary: x < 50 AND y < 50
-//    Element (10,10) 5×5 → entirely in TOP_LEFT → must recurse, NOT stay at root
-// ---------------------------------------------------------------------------
-
-func TestInsert_TopLeftQuadrant_RecursesDown(t *testing.T) {
+func TestInsert_1Element(t *testing.T) {
 	q := rootTree()
-	e := elem(10, 10, 5, 5) // fully inside top-left quadrant
+	e := elem(10, 10, 5, 5)
 
 	if err := q.Insert(e); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	// The element must NOT be stored at the root
-	if e.qt == q {
-		t.Error("element should have been pushed to a child node, not stored at root")
-	}
-	// The element must be stored somewhere (qt not nil)
-	if e.qt == nil {
-		t.Error("SetQuadTree was never called; element has no owning node")
+	if len(q.Elements) != 1 {
+		t.Errorf("Element should  be stored in the root quadtree")
 	}
 }
 
-func TestInsert_TopRightQuadrant_RecursesDown(t *testing.T) {
+func TestInsert_3Element(t *testing.T) {
 	q := rootTree()
-	e := elem(40, 10, 5, 5)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	es := []*MockElement{
+		elem(10, 10, 5, 5),
+		elem(20, 10, 5, 5),
+		elem(20, 20, 5, 5),
 	}
-	if e.qt == q {
-		t.Error("element should have been pushed to a child node")
-	}
-}
-
-func TestInsert_BottomLeftQuadrant_RecursesDown(t *testing.T) {
-	q := rootTree()
-	e := elem(10, 40, 5, 5)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if e.qt == q {
-		t.Error("element should have been pushed to a child node")
-	}
-}
-
-func TestInsert_BottomRightQuadrant_RecursesDown(t *testing.T) {
-	q := rootTree()
-	e := elem(40, 40, 5, 5)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if e.qt == q {
-		t.Error("element should have been pushed to a child node")
-	}
-}
-
-func TestInsert_StradlesHorizontalCenter_StoredAtCurrentNode(t *testing.T) {
-	q := rootTree()
-	e := elem(40, 10, 20, 5)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if e.qt != q {
-		t.Error("element straddling the vertical divider should stay at the root node")
-	}
-}
-
-func TestInsert_StradlesVerticalCenter_StoredAtCurrentNode(t *testing.T) {
-	q := rootTree()
-	e := elem(10, 40, 5, 20)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if e.qt != q {
-		t.Error("element straddling the horizontal divider should stay at the root node")
-	}
-}
-
-// ---------------------------------------------------------------------------
-// 8. Insert – element straddles BOTH axes (all 4 quadrants) → stored at root
-//    Element (40,40) 20×20
-// ---------------------------------------------------------------------------
-
-func TestInsert_StradlesBothAxes_StoredAtCurrentNode(t *testing.T) {
-	q := rootTree()
-	e := elem(40, 40, 20, 20)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if e.qt != q {
-		t.Error("element spanning all 4 quadrants should stay at the root node")
-	}
-}
-
-// ---------------------------------------------------------------------------
-// 9. Insert – multiple elements in different quadrants don't interfere
-// ---------------------------------------------------------------------------
-
-func TestInsert_MultipleElements_IndependentPlacement(t *testing.T) {
-	q := rootTree()
-
-	tl := elem(10, 10, 5, 5) // top-left
-	tr := elem(40, 10, 5, 5) // top-right
-	bl := elem(10, 40, 5, 5) // bottom-left
-	br := elem(40, 40, 5, 5) // bottom-right
-
-	for _, e := range []*MockElement{tl, tr, bl, br} {
+	for _, e := range es {
 		if err := q.Insert(e); err != nil {
-			t.Fatalf("unexpected error inserting element: %v", err)
+			t.Fatalf("unexpected error: %v", err)
 		}
 	}
 
-	// All four must be owned by child nodes (recursed), not by root
-	for _, e := range []*MockElement{tl, tr, bl, br} {
-		if e.qt == q {
-			t.Errorf("element at (%v,%v) should have been placed in a child",
-				e.pos.X, e.pos.Y)
+	if len(q.Elements) != 3 {
+		t.Errorf("Element should  be stored in the root quadtree")
+	}
+}
+
+func TestInsert_4Element(t *testing.T) {
+	q := rootTree()
+	es := []*MockElement{
+		elem(10, 10, 5, 5),
+		elem(20, 10, 5, 5),
+		elem(20, 20, 5, 5),
+		elem(20, 30, 5, 5),
+	}
+	for _, e := range es {
+		if err := q.Insert(e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
-		if e.qt == nil {
-			t.Errorf("element at (%v,%v) has no owning node", e.pos.X, e.pos.Y)
+	}
+
+	if len(q.Elements) != 0 {
+		t.Errorf("Element should't  be stored in the root quadtree")
+	}
+
+	if len(q.Top_left.Elements) != 3 {
+		t.Errorf("3 Elements should  be stored in the top_left quadtree")
+	}
+
+	if len(q.Top_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
+	}
+}
+func print(st *QuadTree) {
+	b, _ := json.Marshal(st)
+	println("df", string(b))
+}
+
+// Root [0,0 → 50×50]
+// │
+// ├── Top_left [0,0 → 25×25]
+// │   │
+// │   ├── Top_left (TL·TL)  [0,0 → 12.5×12.5]
+// │   │       ├── A  pos(5,5)  box(2×2)
+// │   │       └── B  pos(6,5)  box(2×2)
+// │   │
+// │   ├── Top_right (TL·TR) [12.5,0 → 12.5×12.5]
+// │   │       └── C  pos(14,5) box(2×2)
+// │   │
+// │   ├── Bottom_left (TL·BL) [0,12.5 → 12.5×12.5]
+// │   │       └── D  pos(4,15) box(2×2)
+// │   │
+// │   └── Bottom_right (TL·BR) [12.5,12.5 → 12.5×12.5]
+// │           └── E  pos(17,17) box(2×2)
+// │
+// ├── Top_right    [empty / null]
+// ├── Bottom_left  [empty / null]
+// └── Bottom_right [empty / null]
+
+func TestInsert_5Element_SplitTopLeft(t *testing.T) {
+	q := rootTree()
+	es := []*MockElement{
+		elem(5, 5, 2, 2),
+		elem(6, 5, 2, 2),
+		elem(14, 5, 2, 2),
+		elem(4, 15, 2, 2),
+		elem(17, 17, 2, 2),
+	}
+	for _, e := range es {
+		if err := q.Insert(e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	}
-}
 
-// ---------------------------------------------------------------------------
-// 10. Insert – deep recursion: inserting into an already-split child
-//     Two elements both in top-left but different sub-quadrants
-// ---------------------------------------------------------------------------
-
-func TestInsert_DeepRecursion_SameQuadrantTwice(t *testing.T) {
-	q := rootTree()
-
-	// Both land in TOP_LEFT of root (x<50, y<50)
-	// Within TOP_LEFT child (center≈25,25): a is TL-of-TL, b is TR-of-TL
-	a := elem(5, 5, 2, 2)  // top-left of top-left
-	b := elem(35, 5, 2, 2) // top-right of top-left
-
-	if err := q.Insert(a); err != nil {
-		t.Fatalf("unexpected error inserting a: %v", err)
-	}
-	if err := q.Insert(b); err != nil {
-		t.Fatalf("unexpected error inserting b: %v", err)
+	if len(q.Elements) != 0 {
+		t.Errorf("Element should't  be stored in the root quadtree")
 	}
 
-	// Both must be placed somewhere, and they shouldn't share the same node
-	if a.qt == nil || b.qt == nil {
-		t.Fatal("one or both elements were never assigned a node")
+	if len(q.Top_left.Elements) != 0 {
+		t.Errorf("3 Elements should  be stored in the top_left quadtree")
 	}
-	if a.qt == b.qt {
-		t.Error("elements in different sub-quadrants should not share the same node")
+
+	if len(q.Top_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
 	}
 }
 
-// ---------------------------------------------------------------------------
-// 11. Insert – element exactly on the centre point
-//     pos=(50,50) box=(1,1): x+w=51 > 50 and y+h=51 > 50 → BOTTOM_RIGHT only
-//     (x < 50 is false, y < 50 is false) → single quadrant → recurses
-// ---------------------------------------------------------------------------
+// Root [0,0 → 50×50]
+// │
+// ├── Top_left [0,0 → 25×25]
+// │   │   Elements:  pos(12,5)  box(5×2)  ← spans TL·TL and TL·TR
+// │   │
+// │   ├── TL · Top_left     [0,0 → 12.5×12.5]
+// │   │       ├── A  pos(5,5)   box(2×2)
+// │   │       └── B  pos(6,5)   box(2×2)
+// │   │
+// │   ├── TL · Top_right    [12.5,0 → 12.5×12.5]
+// │   │       └── C  pos(14,5)  box(2×2)
+// │   │
+// │   ├── TL · Bottom_left  [0,12.5 → 12.5×12.5]
+// │   │       └── D  pos(4,15)  box(2×2)
+// │   │
+// │   └── TL · Bottom_right [12.5,12.5 → 12.5×12.5]
+// │           └── E  pos(17,17) box(2×2)
+// │
+// ├── Top_right     [null]
+// ├── Bottom_left   [null]
+// └── Bottom_right  [null]
 
-func TestInsert_ElementOnCenterPoint_RecursesBottomRight(t *testing.T) {
+func TestInsert_5Element_ElementIsInMoreQuadtree(t *testing.T) {
 	q := rootTree()
-	e := elem(40, 40, 1, 1)
-
-	if err := q.Insert(e); err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	es := []*MockElement{
+		elem(5, 5, 2, 2),
+		elem(6, 5, 2, 2),
+		elem(12, 5, 5, 2),
+		elem(14, 5, 2, 2),
+		elem(4, 15, 2, 2),
+		elem(17, 17, 2, 2),
 	}
-	if e.qt == q {
-		t.Error("element just past the centre should recurse into bottom-right child")
+	for _, e := range es {
+		if err := q.Insert(e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 	}
-}
 
-// ---------------------------------------------------------------------------
-// 12. SetQuadTree back-reference is always the owning node
-// ---------------------------------------------------------------------------
+	print(q)
+	if len(q.Elements) != 0 {
+		t.Errorf("Element should't  be stored in the root quadtree")
+	}
 
-func TestInsert_SetQuadTreePointsToOwningNode(t *testing.T) {
-	q := rootTree()
+	if len(q.Top_left.Elements) != 0 {
+		t.Errorf("3 Elements should  be stored in the top_left quadtree")
+	}
 
-	// This element straddles the boundary so it must live at root
-	e := elem(40, 40, 20, 20)
-	_ = q.Insert(e)
-
-	if e.qt != q {
-		t.Errorf("expected SetQuadTree to be called with root node, got %v", e.qt)
+	if len(q.Top_right.Elements) != 1 {
+		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
 	}
 }
