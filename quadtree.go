@@ -43,6 +43,7 @@ func NewQuadTree(pos, size base.Vec[float32], higher *QuadTree) *QuadTree {
 func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 	if len(q.Elements) < 3 && !q.hasSub {
 		q.Elements = append(q.Elements, e)
+		e.SetQuadTree(q)
 		return nil
 	}
 
@@ -58,25 +59,28 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 				q.Top_left = NewQuadTree(base.Vec[float32]{X: 0, Y: 0}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
+			q.Top_left.higherQuadTree = q
 			return q.Top_left, alreadyExist
 		case TOP_RIGHT:
 			if q.Top_right == nil {
 				q.Top_right = NewQuadTree(base.Vec[float32]{X: wQ / 2, Y: 0}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
-
+			q.Top_right.higherQuadTree = q
 			return q.Top_right, alreadyExist
 		case BOTTOM_LEFT:
 			if q.Bottom_left == nil {
 				q.Bottom_left = NewQuadTree(base.Vec[float32]{X: 0, Y: hQ / 2}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
+			q.Bottom_left.higherQuadTree = q
 			return q.Bottom_left, alreadyExist
 		case BOTTOM_RIGHT:
 			if q.Bottom_right == nil {
 				q.Bottom_right = NewQuadTree(base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
+			q.Bottom_right.higherQuadTree = q
 			return q.Bottom_right, alreadyExist
 		}
 		return nil, false
@@ -115,6 +119,7 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		}
 		q.hasSub = true
 		err := quadtree.Insert(e)
+		e.SetQuadTree(quadtree)
 		if err != nil {
 			return err
 		}
