@@ -8,8 +8,10 @@ import (
 )
 
 const (
-	W_WINDOW = 1200
-	H_WINDOW = 700
+	W_RESOLUTION = 640
+	H_RESOLUTION = 360
+	W_WINDOW     = 1280
+	H_WINDOW     = 720
 )
 
 func main() {
@@ -21,28 +23,30 @@ func main() {
 	wall := NewSquare(20)
 
 	camera := NewCamera(base.Vec[int32]{
-		X: 320,
-		Y: 180,
+		X: W_RESOLUTION,
+		Y: H_RESOLUTION,
 	}, base.Vec[int32]{
-		X: 320,
-		Y: 180,
+		X: W_WINDOW,
+		Y: H_WINDOW,
 	})
-	rl.SetTargetFPS(1000)
+
+	rl.SetTargetFPS(30)
 	for {
 		if rl.WindowShouldClose() {
 			return
 		}
 
 		if rl.IsKeyPressed(rl.KeyF1) {
-			camera.SetResolution(320, 180)
+			camera.SetResolution(W_RESOLUTION, H_RESOLUTION)
 		}
 
 		if rl.IsKeyPressed(rl.KeyF2) {
-			camera.SetResolution(640, 360)
+			camera.SetResolution(W_RESOLUTION*2, H_RESOLUTION*2)
 		}
 
-		if rl.IsKeyPressed(rl.KeyF11) {
+		if rl.IsKeyPressed(rl.KeyR) {
 			rl.ToggleFullscreen()
+			camera.SetScreenSize(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 		}
 
 		camera.StartRendering(b.CastVec[int32, float32](b.Vec[int32]{}))
@@ -52,7 +56,7 @@ func main() {
 		DrawHitbox(&ball)
 
 		camera.StopRendering()
-		ball.MoveBy(GetVecForKeyboard(20))
+		ball.MoveBy(GetVecForKeyboard(10))
 
 	}
 }
