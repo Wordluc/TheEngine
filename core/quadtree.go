@@ -1,9 +1,9 @@
-package main
+package core
 
 import (
 	"errors"
 	"fmt"
-	"game/base"
+	"game/core/base"
 )
 
 type QuadTreeElement[t base.Number] interface {

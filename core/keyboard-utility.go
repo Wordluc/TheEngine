@@ -1,12 +1,12 @@
-package main
+package core
 
 import (
-	b "game/base"
+	"game/core/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func GetVecForKeyboard(v int) (res b.Vec[float32]) {
+func GetVecForKeyboard(v int) (res base.Vec[float32]) {
 	unit := float32(v) * rl.GetFrameTime()
 	if rl.IsKeyDown(rl.KeyD) {
 		res.AddScalars(unit, 0)

@@ -1,17 +1,14 @@
-package main
+package core
 
 import (
-	"game/base"
+	"game/core/base"
+
 	"testing"
 )
 
-// ---------------------------------------------------------------------------
-// Test double: a simple element that satisfies QuadTreeElement[float32]
-// ---------------------------------------------------------------------------
-
 type MockElement struct {
-	Pos base.Vec[float32] // top-left corner
-	Box base.Vec[float32] // width, height
+	Pos base.Vec[float32]
+	Box base.Vec[float32]
 	qt  *QuadTree
 }
 
@@ -19,7 +16,6 @@ func (m *MockElement) GetPos() base.Vec[float32] { return m.Pos }
 func (m *MockElement) GetBox() base.Vec[float32] { return m.Box }
 func (m *MockElement) SetQuadTree(q *QuadTree)   { m.qt = q }
 
-// helper to build a MockElement at (x,y) with size (w,h)
 func elem(x, y, w, h float32) *MockElement {
 	return &MockElement{
 		Pos: base.Vec[float32]{X: x, Y: y},
@@ -27,20 +23,11 @@ func elem(x, y, w, h float32) *MockElement {
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Root tree used in most tests
-// World: center=(50,50), half-size=(50,50) → covers (0,0)→(100,100)
-// ---------------------------------------------------------------------------
-
 func rootTree() *QuadTree {
 	center := base.Vec[float32]{X: 0, Y: 0}
 	size := base.Vec[float32]{X: 50, Y: 50}
 	return NewQuadTree(center, size, nil)
 }
-
-// ---------------------------------------------------------------------------
-// 1. NewQuadTree – basic construction
-// ---------------------------------------------------------------------------
 
 func TestNewQuadTree_InitialisedCorrectly(t *testing.T) {
 	q := rootTree()

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"game/base"
-	b "game/base"
+	"game/core"
+	"game/core/base"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -17,12 +17,12 @@ const (
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 
-	ball := NewBall(10)
-	ball.MoveTo(b.NewVec[float32](1260, 40))
+	ball := core.NewBall(10)
+	ball.MoveTo(base.NewVec[float32](1260, 40))
 
-	wall := NewSquare(20)
+	wall := core.NewSquare(20)
 
-	camera := NewCamera(base.Vec[int32]{
+	camera := core.NewCamera(base.Vec[int32]{
 		X: W_RESOLUTION,
 		Y: H_RESOLUTION,
 	}, base.Vec[int32]{
@@ -49,14 +49,14 @@ func main() {
 			camera.SetScreenSize(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 		}
 
-		camera.StartRendering(b.CastVec[int32, float32](b.Vec[int32]{}))
+		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
 
 		ball.Draw()
 		wall.Draw()
-		DrawHitbox(&ball)
+		core.DrawHitbox(&ball)
 
 		camera.StopRendering()
-		ball.MoveBy(GetVecForKeyboard(10))
+		ball.MoveBy(core.GetVecForKeyboard(10))
 
 	}
 }
