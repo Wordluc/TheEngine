@@ -1,22 +1,22 @@
 package base
 
-type number interface {
+type Number interface {
 	int32 | float32
 }
 
-type Vec[t number] struct {
+type Vec[t Number] struct {
 	X t
 	Y t
 }
 
-func NewVec[t number](x, y t) Vec[t] {
+func NewVec[t Number](x, y t) Vec[t] {
 	return Vec[t]{
 		X: x,
 		Y: y,
 	}
 }
 
-func (v *Vec[t]) Get() (t, t) {
+func (v Vec[t]) Get() (t, t) {
 	return v.X, v.Y
 }
 
@@ -40,7 +40,7 @@ func (v *Vec[t]) SubScalars(x, y t) {
 	v.Y -= y
 }
 
-func CastVec[from, to number](a Vec[from]) Vec[to] {
+func CastVec[from, to Number](a Vec[from]) Vec[to] {
 	return Vec[to]{
 		X: to(a.X),
 		Y: to(a.Y),
