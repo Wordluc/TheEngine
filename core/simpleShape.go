@@ -10,12 +10,14 @@ type Ball struct {
 	hitbox *base.Hitbox
 	pos    *base.Vec[float32]
 	r      float32
+	Color  rl.Color
 }
 
 func NewBall(r int32) (b Ball) {
 	b.hitbox = new(base.NewHitbox(&b, r*2, r*2))
 	b.r = float32(r)
 	b.pos = new(base.Vec[float32])
+	b.Color = rl.Black
 	return b
 }
 
@@ -37,7 +39,7 @@ func (b *Ball) GetPos() *base.Vec[float32] {
 
 func (b *Ball) Draw() {
 	x, y := b.pos.Get()
-	rl.DrawCircle(int32(x+b.r), int32(y+b.r), b.r, rl.Black)
+	rl.DrawCircle(int32(x+b.r), int32(y+b.r), b.r, b.Color)
 }
 
 type Square struct {

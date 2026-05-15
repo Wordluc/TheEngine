@@ -16,6 +16,10 @@ func NewVec[t Number](x, y t) Vec[t] {
 	}
 }
 
+func (v *Vec[t]) IsZero() bool {
+	return v.X == 0 && v.Y == 0
+}
+
 func (v Vec[t]) Get() (t, t) {
 	return v.X, v.Y
 }
