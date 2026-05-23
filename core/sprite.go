@@ -9,14 +9,14 @@ import (
 
 type SpriteSheet struct {
 	rl.Texture2D
-	cols int32
-	rows int32
+	cols int8
+	rows int8
 }
 type Sprite struct {
 	base.ObjectBase
 	spriteSheets       map[string]SpriteSheet
 	currentSpriteSheet string
-	CurrentSprite      int
+	CurrentSprite      int8
 	_currentSprite     float32
 	spriteSize         base.Vec[float32]
 	SpeedSpriteLoop    float32
@@ -31,8 +31,8 @@ func NewSprite(spriteSize base.Vec[float32], spriteSheetPaths map[string]string)
 		}
 		s.spriteSheets[name] = SpriteSheet{
 			Texture2D: texture,
-			cols:      texture.Width / int32(spriteSize.X),
-			rows:      texture.Height / int32(spriteSize.Y),
+			cols:      int8(texture.Width / int32(spriteSize.X)),
+			rows:      int8(texture.Height / int32(spriteSize.Y)),
 		}
 		s.currentSpriteSheet = name
 
@@ -57,7 +57,7 @@ func (s *Sprite) SpriteLoop() {
 func (s *Sprite) Draw() {
 	sheet := s.spriteSheets[s.currentSpriteSheet]
 	x, y := s.Pos.Get()
-	col, row := float32(s.CurrentSprite%int(sheet.cols))*s.spriteSize.X, float32(s.CurrentSprite/int(sheet.rows))*s.spriteSize.Y
+	col, row := float32(s.CurrentSprite%sheet.cols)*s.spriteSize.X, float32(s.CurrentSprite/sheet.rows)*s.spriteSize.Y
 	rl.DrawTextureRec(
 		sheet.Texture2D,
 		rl.Rectangle{X: col, Y: row, Width: s.spriteSize.X, Height: s.spriteSize.Y},
