@@ -6,9 +6,9 @@ type Node struct {
 	pos     *Vec[float32]
 }
 
-func NewNode(p *Vec[float32]) Node {
+func NewNode(p Vec[float32]) Node {
 	return Node{
-		pos: p,
+		pos: &p,
 	}
 }
 

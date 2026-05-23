@@ -9,15 +9,15 @@ type Object interface {
 }
 
 type ObjectBase struct {
-	Pos *Vec[float32]
+	Pos Vec[float32]
 }
 
 func (o *ObjectBase) GetPos() *Vec[float32] {
-	return o.Pos
+	return &o.Pos
 }
 
 func (o *ObjectBase) MoveTo(v Vec[float32]) {
-	o.Pos = new(v)
+	o.Pos = v
 }
 
 func (o *ObjectBase) MoveBy(v Vec[float32]) {

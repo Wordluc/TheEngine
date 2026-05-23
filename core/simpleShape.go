@@ -15,7 +15,7 @@ type Ball struct {
 func NewBall(r int32) (b Ball) {
 	b.hitbox = new(base.NewHitbox(&b, r*2, r*2))
 	b.r = float32(r)
-	b.Pos = new(base.Vec[float32])
+	b.Pos = base.Vec[float32]{}
 	return b
 }
 
