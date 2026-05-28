@@ -40,6 +40,10 @@ func (v *Vec[t]) SubScalars(x, y t) {
 	v.Y -= y
 }
 
+func (v *Vec[t]) IsNull() bool {
+	return v.X == 0 && v.Y == 0
+}
+
 func CastVec[from, to Number](a Vec[from]) Vec[to] {
 	return Vec[to]{
 		X: to(a.X),
