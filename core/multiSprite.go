@@ -32,17 +32,18 @@ func (s *MultiSprite) Draw() {
 	if size.IsNull() {
 		size = s.spriteSheet.spriteSize
 	}
+	var dest rl.Rectangle
 	for range s.BlockSize.Y {
 		for range s.BlockSize.X {
+
+			dest.X = x + float32(i_x*int32(size.X))
+			dest.Y = y + float32(i_y*int32(size.Y))
+			dest.Width = size.X
+			dest.Height = size.Y
 			rl.DrawTexturePro(
 				s.spriteSheet.Texture2D,
 				source,
-				rl.Rectangle{
-					X:      x + float32(i_x*int32(size.X)),
-					Y:      y + float32(i_y*int32(size.Y)),
-					Width:  size.X,
-					Height: size.Y,
-				},
+				dest,
 				rl.Vector2{},
 				0,
 				rl.White,

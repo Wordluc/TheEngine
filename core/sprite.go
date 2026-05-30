@@ -46,15 +46,16 @@ func (s *Sprite) Draw() {
 	if size.IsNull() {
 		size = spriteSheet.spriteSize
 	}
+	dest := rl.Rectangle{
+		X:      x + float32(size.X),
+		Y:      y + float32(size.Y),
+		Width:  size.X,
+		Height: size.X,
+	}
 	rl.DrawTexturePro(
 		spriteSheet.Texture2D,
 		spriteSheet.GetRectangle(s.CurrentSprite),
-		rl.Rectangle{
-			X:      x + float32(size.X),
-			Y:      y + float32(size.Y),
-			Width:  size.X,
-			Height: size.X,
-		},
+		dest,
 		rl.Vector2{},
 		0,
 		rl.White,
