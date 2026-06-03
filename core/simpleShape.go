@@ -13,7 +13,7 @@ type Circle struct {
 }
 
 func NewBall(r int32) (b Circle) {
-	b.hitbox = new(base.NewHitbox(&b, r*2, r*2))
+	b.hitbox = new(base.NewHitbox(r*2, r*2))
 	b.r = float32(r)
 	b.Pos = base.Vec[float32]{}
 	return b
@@ -35,7 +35,7 @@ type Square struct {
 }
 
 func NewSquare(l int32) (b Square) {
-	b.hitbox = new(base.NewHitbox(&b, l, l))
+	b.hitbox = new(base.NewHitbox(l, l))
 	b.l = float32(l)
 	b.pos = new(base.Vec[float32])
 	return b

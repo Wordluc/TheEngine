@@ -1,4 +1,4 @@
-package core
+package physics
 
 import (
 	"errors"
@@ -7,8 +7,8 @@ import (
 )
 
 type QuadTreeElement[t base.Number] interface {
-	GetPos() base.Vec[t]
-	GetBox() base.Vec[t]
+	GetHitbox() *base.Hitbox
+	MoveBy(base.Vec[float32])
 	SetQuadTree(*QuadTree)
 }
 
@@ -88,10 +88,12 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 
 	elementsToReallocate := append(q.Elements, e)
 	q.Elements = make([]QuadTreeElement[float32], 0)
+	var hitbox base.Hitbox
 	for i := range elementsToReallocate {
 		e := elementsToReallocate[i]
-		x, y := e.GetPos().Get()
-		w, h := e.GetBox().Get()
+		hitbox = *e.GetHitbox()
+		x, y := hitbox.GetPos().Get()
+		w, h := hitbox.GetBox().Get()
 		quadtreeToCreate := []string{}
 		if x < centerX && y < centerY {
 			quadtreeToCreate = append(quadtreeToCreate, TOP_LEFT)

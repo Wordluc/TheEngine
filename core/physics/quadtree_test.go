@@ -7,19 +7,21 @@ import (
 )
 
 type MockElement struct {
-	Pos base.Vec[float32]
-	Box base.Vec[float32]
-	qt  *QuadTree
+	*base.Hitbox
+	qt *QuadTree
 }
 
-func (m *MockElement) GetPos() base.Vec[float32] { return m.Pos }
-func (m *MockElement) GetBox() base.Vec[float32] { return m.Box }
-func (m *MockElement) SetQuadTree(q *QuadTree)   { m.qt = q }
+func (m *MockElement) GetHitbox() *base.Hitbox {
+	return m.Hitbox
+}
+func (m *MockElement) SetQuadTree(q *QuadTree)    { m.qt = q }
+func (m *MockElement) MoveBy(_ base.Vec[float32]) {}
 
 func elem(x, y, w, h float32) *MockElement {
+	hitbox := base.NewHitbox(int32(w), int32(h))
+	hitbox.Pos = new(base.Vec[float32]{X: x, Y: y})
 	return &MockElement{
-		Pos: base.Vec[float32]{X: x, Y: y},
-		Box: base.Vec[float32]{X: w, Y: h},
+		Hitbox: &hitbox,
 	}
 }
 
