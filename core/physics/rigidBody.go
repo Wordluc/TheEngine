@@ -31,14 +31,7 @@ func (r *RigidBody) Move(v base.Vec[float32]) {
 }
 
 func (a *RigidBody) ResolveCollision(b *RigidBody, v base.Vec[float32]) error {
-	if a.isStatic {
-		if b.isStatic {
-			return nil
-		}
-		b.Move(v)
-	} else {
-		b.Move(v)
-	}
+	a.Move(v)
 	return nil
 }
 
@@ -46,9 +39,12 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	if !a.toSimulate || !b.toSimulate {
 		return nil
 	}
+	if a.isStatic {
+		return nil
+	}
 
-	hitboxA := a.GetHitbox()
-	hitboxB := b.GetHitbox()
+	hitboxA := a.o.GetHitbox()
+	hitboxB := b.o.GetHitbox()
 
 	posA := hitboxA.GetPos()
 	posB := hitboxB.GetPos()
@@ -60,9 +56,9 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	centerB := base.Vec[float32]{X: posB.X + sizeB.X/2, Y: posB.Y + sizeB.Y/2}
 
 	centerDistance := base.SubVecs(centerA, centerB)
-
 	totalSize := base.AddVecs(sizeA, sizeB)
 	distance := base.NewVec(centerDistance.X-totalSize.X/2, centerDistance.Y-totalSize.Y/2)
+
 	if distance.X < 0 || distance.Y < 0 {
 		return a.ResolveCollision(b, distance)
 	}
