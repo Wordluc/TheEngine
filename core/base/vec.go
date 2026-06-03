@@ -44,6 +44,19 @@ func (v *Vec[t]) IsNull() bool {
 	return v.X == 0 && v.Y == 0
 }
 
+func SubVecs[t Number](a, b Vec[t]) Vec[t] {
+	return Vec[t]{
+		a.X - b.X,
+		a.Y - b.Y,
+	}
+}
+func AddVecs[t Number](a, b Vec[t]) Vec[t] {
+	return Vec[t]{
+		a.X + b.X,
+		a.Y + b.Y,
+	}
+}
+
 func CastVec[from, to Number](a Vec[from]) Vec[to] {
 	return Vec[to]{
 		X: to(a.X),
