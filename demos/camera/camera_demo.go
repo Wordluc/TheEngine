@@ -3,6 +3,7 @@ package main
 import (
 	"game/core"
 	"game/core/base"
+	"game/core/utils"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -53,10 +54,10 @@ func main() {
 
 		ball.Draw()
 		wall.Draw()
-		core.DrawHitbox(&ball)
+		utils.DrawHitbox(&ball)
 
 		camera.StopRendering()
-		ball.MoveBy(core.GetVecForKeyboard(10))
+		ball.MoveBy(utils.GetVecForKeyboard(10))
 
 	}
 }

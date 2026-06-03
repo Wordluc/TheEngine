@@ -1,4 +1,4 @@
-package core
+package physics
 
 import (
 	"game/core/base"

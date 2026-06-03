@@ -61,7 +61,7 @@ func main() {
 		)
 		terrain.Draw()
 
-		character.MoveBy(core.GetVecForKeyboard(100))
+		character.MoveBy(utils.GetVecForKeyboard(100))
 		camera.StopRendering()
 		sp.SpriteLoop()
 	}
