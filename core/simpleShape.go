@@ -6,24 +6,24 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-type Ball struct {
+type Circle struct {
 	hitbox *base.Hitbox
 	r      float32
 	base.ObjectBase
 }
 
-func NewBall(r int32) (b Ball) {
+func NewBall(r int32) (b Circle) {
 	b.hitbox = new(base.NewHitbox(&b, r*2, r*2))
 	b.r = float32(r)
 	b.Pos = base.Vec[float32]{}
 	return b
 }
 
-func (b *Ball) GetHitbox() *base.Hitbox {
+func (b *Circle) GetHitbox() *base.Hitbox {
 	return b.hitbox
 }
 
-func (b *Ball) Draw() {
+func (b *Circle) Draw() {
 	x, y := b.Pos.Get()
 	rl.DrawCircle(int32(x+b.r), int32(y+b.r), b.r, rl.Black)
 }
