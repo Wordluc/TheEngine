@@ -18,7 +18,7 @@ const (
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 
-	ball := core.NewBall(10)
+	ball := core.NewCircle(10)
 	ball.MoveTo(base.NewVec[float32](1260, 40))
 
 	wall := core.NewSquare(20)

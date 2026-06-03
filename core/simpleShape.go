@@ -12,7 +12,7 @@ type Circle struct {
 	base.ObjectBase
 }
 
-func NewBall(r int32) (b Circle) {
+func NewCircle(r int32) (b Circle) {
 	b.hitbox = new(base.NewHitbox(r*2, r*2))
 	b.r = float32(r)
 	b.Pos = base.Vec[float32]{}
