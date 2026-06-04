@@ -9,7 +9,7 @@ type RigidBody struct {
 
 func NewRigidBody(toSimulate, isStatic bool) RigidBody {
 	return RigidBody{
-		toSimulate: isStatic,
+		toSimulate: toSimulate,
 		isStatic:   isStatic,
 	}
 }

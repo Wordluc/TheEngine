@@ -7,7 +7,6 @@ import (
 
 type QuadTreeElement[t Number] interface {
 	GetHitbox() *Hitbox
-	MoveBy(Vec[float32])
 	SetQuadTree(*QuadTree)
 }
 
