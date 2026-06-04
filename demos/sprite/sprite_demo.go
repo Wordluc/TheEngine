@@ -55,7 +55,9 @@ func main() {
 		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
 		_ = character.ForEachObjects(
 			func(o base.Object) error {
-				o.Draw()
+				if d, ok := o.(base.Drawable); ok {
+					d.Draw()
+				}
 				return nil
 			},
 		)

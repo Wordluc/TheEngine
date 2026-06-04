@@ -7,20 +7,16 @@ import (
 )
 
 type Circle struct {
-	hitbox *base.Hitbox
-	r      float32
+	r float32
+	m base.Modifier
 	base.ObjectBase
 }
 
 func NewCircle(r int32) (b Circle) {
-	b.hitbox = new(base.NewHitbox(r*2, r*2))
+	b.Hitbox = new(base.NewHitbox(float32(r*2), float32(r*2)))
 	b.r = float32(r)
 	b.Pos = base.Vec[float32]{}
 	return b
-}
-
-func (b *Circle) GetHitbox() *base.Hitbox {
-	return b.hitbox
 }
 
 func (b *Circle) Draw() {
@@ -29,35 +25,19 @@ func (b *Circle) Draw() {
 }
 
 type Square struct {
-	hitbox *base.Hitbox
-	pos    *base.Vec[float32]
-	l      float32
+	base.ObjectBase
+	w float32
+	h float32
 }
 
-func NewSquare(l int32) (b Square) {
-	b.hitbox = new(base.NewHitbox(l, l))
-	b.l = float32(l)
-	b.pos = new(base.Vec[float32])
+func NewRectangle(w, h float32) (b Square) {
+	b.Hitbox = new(base.NewHitbox(w, h))
+	b.w = w
+	b.h = h
 	return b
 }
 
-func (b *Square) GetHitbox() *base.Hitbox {
-	return b.hitbox
-}
-
-func (b *Square) MoveTo(v base.Vec[float32]) {
-	b.pos = new(v)
-}
-
-func (b *Square) MoveBy(v base.Vec[float32]) {
-	b.pos.Add(v)
-}
-
-func (b *Square) GetPos() *base.Vec[float32] {
-	return b.pos
-}
-
 func (b *Square) Draw() {
-	x, y := b.pos.Get()
-	rl.DrawRectangle(int32(x), int32(y), int32(b.l), int32(b.l), rl.Black)
+	x, y := b.Pos.Get()
+	rl.DrawRectangle(int32(x), int32(y), int32(b.w), int32(b.h), rl.Black)
 }

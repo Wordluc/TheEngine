@@ -16,7 +16,7 @@ func (m *MockElement) SetQuadTree(q *QuadTree) { m.qt = q }
 func (m *MockElement) MoveBy(_ Vec[float32])   {}
 
 func elem(x, y, w, h float32) *MockElement {
-	hitbox := NewHitbox(int32(w), int32(h))
+	hitbox := NewHitbox(w, h)
 	hitbox.Pos = new(Vec[float32]{X: x, Y: y})
 	return &MockElement{
 		Hitbox: &hitbox,

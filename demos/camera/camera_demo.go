@@ -21,7 +21,7 @@ func main() {
 	ball := core.NewCircle(10)
 	ball.MoveTo(base.NewVec[float32](1260, 40))
 
-	wall := core.NewSquare(20)
+	wall := core.NewRectangle(20, 20)
 
 	camera := core.NewCamera(base.Vec[int32]{
 		X: W_RESOLUTION,

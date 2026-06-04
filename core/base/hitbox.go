@@ -6,7 +6,7 @@ type Hitbox struct {
 	IsActive bool
 }
 
-func NewHitbox(w, h int32) Hitbox {
+func NewHitbox(w, h float32) Hitbox {
 	return Hitbox{
 		Box:      new(NewVec(float32(w), float32(h))),
 		Pos:      new(NewVec[float32](0, 0)),

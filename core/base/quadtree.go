@@ -3,11 +3,13 @@ package base
 import (
 	"errors"
 	"fmt"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type QuadTreeElement[t Number] interface {
+	GetPos() Vec[float32]
 	GetHitbox() *Hitbox
-	SetQuadTree(*QuadTree)
 }
 
 type QuadTree struct {
@@ -41,7 +43,6 @@ func NewQuadTree(pos, size Vec[float32], higher *QuadTree) *QuadTree {
 func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 	if len(q.Elements) < 3 && !q.hasSub {
 		q.Elements = append(q.Elements, e)
-		e.SetQuadTree(q)
 		return nil
 	}
 
@@ -86,12 +87,11 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 
 	elementsToReallocate := append(q.Elements, e)
 	q.Elements = make([]QuadTreeElement[float32], 0)
-	var hitbox Hitbox
 	for i := range elementsToReallocate {
 		e := elementsToReallocate[i]
-		hitbox = *e.GetHitbox()
-		x, y := hitbox.GetPos().Get()
-		w, h := hitbox.GetBox().Get()
+		pos := AddVecs(e.GetPos(), e.GetHitbox().GetPos())
+		x, y := pos.Get()
+		w, h := e.GetHitbox().GetBox().Get()
 		quadtreeToCreate := []string{}
 		if x < centerX && y < centerY {
 			quadtreeToCreate = append(quadtreeToCreate, TOP_LEFT)
@@ -110,7 +110,6 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		}
 		if len(quadtreeToCreate) > 1 {
 			q.Elements = append(q.Elements, e)
-			e.SetQuadTree(q)
 			continue
 		}
 		quadtree, _ := createQuadTree(quadtreeToCreate[0])
@@ -119,11 +118,66 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		}
 		q.hasSub = true
 		err := quadtree.Insert(e)
-		e.SetQuadTree(quadtree)
 		if err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func (q *QuadTree) subQuery(elements []QuadTreeElement[float32], forEach func(o []QuadTreeElement[float32])) {
+	if q.Top_left != nil {
+		q.Top_left.subQuery(append(elements, q.Elements...), forEach)
+	}
+	if q.Top_right != nil {
+		q.Top_right.subQuery(append(elements, q.Elements...), forEach)
+	}
+	if q.Bottom_left != nil {
+		q.Bottom_left.subQuery(append(elements, q.Elements...), forEach)
+	}
+	if q.Bottom_right != nil {
+		q.Bottom_right.subQuery(append(elements, q.Elements...), forEach)
+	}
+	forEach(append(elements, q.Elements...))
+}
+
+func (q *QuadTree) Query(forEach func([]QuadTreeElement[float32])) {
+	q.subQuery(q.Elements, forEach)
+}
+
+func (q *QuadTree) Clear() {
+	q.Elements = q.Elements[:0] // keep backing array
+
+	if q.Top_left != nil {
+		q.Top_left.Clear()
+	}
+	if q.Top_right != nil {
+		q.Top_right.Clear()
+	}
+	if q.Bottom_left != nil {
+		q.Bottom_left.Clear()
+	}
+	if q.Bottom_right != nil {
+		q.Bottom_right.Clear()
+	}
+}
+
+func (q *QuadTree) DrawBorder() {
+	if len(q.Elements) != 0 {
+		rl.DrawRectangleLines(int32(q.Pos.X), int32(q.Pos.Y), int32(q.Size.X), int32(q.Size.Y), rl.Red)
+	}
+
+	if q.Top_left != nil {
+		q.Top_left.DrawBorder()
+	}
+	if q.Top_right != nil {
+		q.Top_right.DrawBorder()
+	}
+	if q.Bottom_left != nil {
+		q.Bottom_left.DrawBorder()
+	}
+	if q.Bottom_right != nil {
+		q.Bottom_right.DrawBorder()
+	}
 }

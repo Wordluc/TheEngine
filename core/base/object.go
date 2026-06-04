@@ -1,28 +1,30 @@
 package base
 
 type Modifier interface {
-	SetObject(Modificable)
+	SetObject(Object)
 }
 
-type Modificable interface {
-	SetModifier(Modifier)
+type Drawable interface {
+	Draw()
 }
 
 type Object interface {
 	GetHitbox() *Hitbox
-	Draw()
 	MoveTo(Vec[float32])
 	MoveBy(Vec[float32])
-	GetPos() *Vec[float32]
+	GetPos() Vec[float32]
+	SetModifier(Modifier)
+	GetModifiers() []Modifier
 }
 
 type ObjectBase struct {
 	Pos      Vec[float32]
 	Modifier []Modifier
+	Hitbox   *Hitbox
 }
 
-func (o *ObjectBase) GetPos() *Vec[float32] {
-	return &o.Pos
+func (o *ObjectBase) GetPos() Vec[float32] {
+	return o.Pos
 }
 
 func (o *ObjectBase) MoveTo(v Vec[float32]) {
@@ -31,6 +33,14 @@ func (o *ObjectBase) MoveTo(v Vec[float32]) {
 
 func (o *ObjectBase) MoveBy(v Vec[float32]) {
 	o.Pos.Add(v)
+}
+
+func (r *ObjectBase) GetHitbox() *Hitbox {
+	return r.Hitbox
+}
+
+func (o *ObjectBase) GetModifiers() []Modifier {
+	return o.Modifier
 }
 
 func (o *ObjectBase) SetModifier(m Modifier) {

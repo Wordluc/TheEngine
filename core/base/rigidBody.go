@@ -1,5 +1,9 @@
 package base
 
+import (
+	"math"
+)
+
 type RigidBody struct {
 	o          Object
 	quadtree   *QuadTree
@@ -31,7 +35,13 @@ func (r *RigidBody) Move(v Vec[float32]) {
 }
 
 func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
-	a.Move(v)
+	res := NewVec[float32](0, 0)
+	if math.Abs(float64(v.X)) < math.Abs(float64(v.Y)) {
+		res.AddScalars(v.X, 0)
+	} else {
+		res.AddScalars(0, v.Y)
+	}
+	a.Move(res)
 	return nil
 }
 
@@ -46,8 +56,8 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	hitboxA := a.o.GetHitbox()
 	hitboxB := b.o.GetHitbox()
 
-	posA := hitboxA.GetPos()
-	posB := hitboxB.GetPos()
+	posA := AddVecs(hitboxA.GetPos(), a.o.GetPos())
+	posB := AddVecs(hitboxB.GetPos(), b.o.GetPos())
 
 	sizeA := hitboxA.GetBox()
 	sizeB := hitboxB.GetBox()
@@ -56,10 +66,10 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	centerB := Vec[float32]{X: posB.X + sizeB.X/2, Y: posB.Y + sizeB.Y/2}
 
 	centerDistance := SubVecs(centerA, centerB)
+	centerDistance = NewVec(float32(math.Abs(float64(centerDistance.X))), float32(math.Abs(float64(centerDistance.Y))))
 	totalSize := AddVecs(sizeA, sizeB)
 	distance := NewVec(centerDistance.X-totalSize.X/2, centerDistance.Y-totalSize.Y/2)
-
-	if distance.X < 0 || distance.Y < 0 {
+	if distance.X < 0 && distance.Y < 0 {
 		return a.ResolveCollision(b, distance)
 	}
 	return nil

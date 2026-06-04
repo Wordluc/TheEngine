@@ -17,14 +17,14 @@ func (n *Node) MoveTo(v Vec[float32]) {
 	xDest, yDest := v.Get()
 	diffX, diffY := xDest-xNode, yDest-yNode
 	n.ForEachObjects(func(o Object) error {
-		o.GetPos().Add(NewVec(diffX, diffY))
+		o.MoveBy(NewVec(diffX, diffY))
 		return nil
 	})
 }
 
 func (n *Node) MoveBy(v Vec[float32]) {
 	n.ForEachObjects(func(o Object) error {
-		o.GetPos().Add(v)
+		o.MoveBy(v)
 		return nil
 	})
 	n.pos.Add(v)
