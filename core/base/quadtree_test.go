@@ -1,33 +1,31 @@
-package physics
+package base
 
 import (
-	"game/core/base"
-
 	"testing"
 )
 
 type MockElement struct {
-	*base.Hitbox
+	*Hitbox
 	qt *QuadTree
 }
 
-func (m *MockElement) GetHitbox() *base.Hitbox {
+func (m *MockElement) GetHitbox() *Hitbox {
 	return m.Hitbox
 }
-func (m *MockElement) SetQuadTree(q *QuadTree)    { m.qt = q }
-func (m *MockElement) MoveBy(_ base.Vec[float32]) {}
+func (m *MockElement) SetQuadTree(q *QuadTree) { m.qt = q }
+func (m *MockElement) MoveBy(_ Vec[float32])   {}
 
 func elem(x, y, w, h float32) *MockElement {
-	hitbox := base.NewHitbox(int32(w), int32(h))
-	hitbox.Pos = new(base.Vec[float32]{X: x, Y: y})
+	hitbox := NewHitbox(int32(w), int32(h))
+	hitbox.Pos = new(Vec[float32]{X: x, Y: y})
 	return &MockElement{
 		Hitbox: &hitbox,
 	}
 }
 
 func rootTree() *QuadTree {
-	center := base.Vec[float32]{X: 0, Y: 0}
-	size := base.Vec[float32]{X: 50, Y: 50}
+	center := Vec[float32]{X: 0, Y: 0}
+	size := Vec[float32]{X: 50, Y: 50}
 	return NewQuadTree(center, size, nil)
 }
 

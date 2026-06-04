@@ -1,21 +1,20 @@
-package physics
+package base
 
 import (
 	"errors"
 	"fmt"
-	"game/core/base"
 )
 
-type QuadTreeElement[t base.Number] interface {
-	GetHitbox() *base.Hitbox
-	MoveBy(base.Vec[float32])
+type QuadTreeElement[t Number] interface {
+	GetHitbox() *Hitbox
+	MoveBy(Vec[float32])
 	SetQuadTree(*QuadTree)
 }
 
 type QuadTree struct {
 	Elements       []QuadTreeElement[float32]
-	Pos            base.Vec[float32]
-	Size           base.Vec[float32]
+	Pos            Vec[float32]
+	Size           Vec[float32]
 	hasSub         bool
 	higherQuadTree *QuadTree
 	Top_left       *QuadTree
@@ -31,7 +30,7 @@ const (
 	BOTTOM_RIGHT = "BOTTOM_RIGHT"
 )
 
-func NewQuadTree(pos, size base.Vec[float32], higher *QuadTree) *QuadTree {
+func NewQuadTree(pos, size Vec[float32], higher *QuadTree) *QuadTree {
 	res := QuadTree{}
 	res.Pos = pos
 	res.Size = size
@@ -56,28 +55,28 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		switch where {
 		case TOP_LEFT:
 			if q.Top_left == nil {
-				q.Top_left = NewQuadTree(base.Vec[float32]{X: 0, Y: 0}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_left = NewQuadTree(Vec[float32]{X: 0, Y: 0}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_left.higherQuadTree = q
 			return q.Top_left, alreadyExist
 		case TOP_RIGHT:
 			if q.Top_right == nil {
-				q.Top_right = NewQuadTree(base.Vec[float32]{X: wQ / 2, Y: 0}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_right = NewQuadTree(Vec[float32]{X: wQ / 2, Y: 0}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_right.higherQuadTree = q
 			return q.Top_right, alreadyExist
 		case BOTTOM_LEFT:
 			if q.Bottom_left == nil {
-				q.Bottom_left = NewQuadTree(base.Vec[float32]{X: 0, Y: hQ / 2}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_left = NewQuadTree(Vec[float32]{X: 0, Y: hQ / 2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_left.higherQuadTree = q
 			return q.Bottom_left, alreadyExist
 		case BOTTOM_RIGHT:
 			if q.Bottom_right == nil {
-				q.Bottom_right = NewQuadTree(base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, base.Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_right = NewQuadTree(Vec[float32]{X: wQ / 2, Y: hQ / 2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_right.higherQuadTree = q
@@ -88,7 +87,7 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 
 	elementsToReallocate := append(q.Elements, e)
 	q.Elements = make([]QuadTreeElement[float32], 0)
-	var hitbox base.Hitbox
+	var hitbox Hitbox
 	for i := range elementsToReallocate {
 		e := elementsToReallocate[i]
 		hitbox = *e.GetHitbox()
