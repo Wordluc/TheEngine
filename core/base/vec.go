@@ -20,6 +20,19 @@ func (v Vec[t]) Get() (t, t) {
 	return v.X, v.Y
 }
 
+func (v *Vec[t]) Clone() Vec[t] {
+	return Vec[t]{
+		v.X,
+		v.Y,
+	}
+
+}
+
+func (v *Vec[t]) MultScalar(a t) {
+	v.X *= a
+	v.Y *= a
+}
+
 func (v *Vec[t]) Add(a Vec[t]) {
 	v.X += a.X
 	v.Y += a.Y
@@ -38,6 +51,10 @@ func (v *Vec[t]) AddScalars(x, y t) {
 func (v *Vec[t]) SubScalars(x, y t) {
 	v.X -= x
 	v.Y -= y
+}
+
+func FromAtoBVec[t Number](a, b Vec[t]) Vec[t] {
+	return Vec[t]{X: b.X - a.X, Y: b.Y - a.Y}
 }
 
 func (v *Vec[t]) IsNull() bool {

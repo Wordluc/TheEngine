@@ -19,21 +19,21 @@ var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 	ball := core.NewCircle(10)
-	rBall := new(base.NewRigidBody(true, false))
+	rBall := new(base.NewRigidBody(true, false, 5))
 	ball.SetModifier(rBall)
-	terrain := core.NewRectangle(100, 5)
-	terrain.MoveTo(base.NewVec[float32](0, 100))
-	rTerrain := new(base.NewRigidBody(true, true))
+	terrain := core.NewRectangle(500, 5)
+	terrain.MoveTo(base.NewVec[float32](0, 200))
+	rTerrain := new(base.NewRigidBody(true, true, 0))
 	terrain.SetModifier(rTerrain)
 
 	block := core.NewRectangle(20, 20)
-	block.MoveTo(base.NewVec[float32](40, 50))
-	rBlock := new(base.NewRigidBody(true, false))
+	block.MoveTo(base.NewVec[float32](60, 180))
+	rBlock := new(base.NewRigidBody(true, true, 30))
 	block.SetModifier(rBlock)
 
 	block1 := core.NewRectangle(20, 20)
 	block1.MoveTo(base.NewVec[float32](40, 50))
-	rBlock1 := new(base.NewRigidBody(true, false))
+	rBlock1 := new(base.NewRigidBody(true, true, 30))
 	block1.SetModifier(rBlock1)
 
 	camera := core.NewCamera(base.Vec[int32]{
@@ -49,13 +49,21 @@ func main() {
 		if rl.WindowShouldClose() {
 			return
 		}
-		ball.MoveBy(base.NewVec(0, 20*rl.GetFrameTime()))
-		block.MoveBy(base.NewVec(0, 20*rl.GetFrameTime()))
+		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
+			rb.ApplyAcceleration(base.NewVec[float32](0, 20))
+			rb.Integrate(rl.GetFrameTime())
+		})
+
+		base.UseModifierRef(&block, func(rb *base.RigidBody) {
+			rb.ApplyAcceleration(base.NewVec[float32](0, 20))
+			rb.Integrate(rl.GetFrameTime())
+		})
 		quad.Clear()
 		quad.Insert(&ball)
 		quad.Insert(&terrain)
 		quad.Insert(&block)
 		quad.Insert(&block1)
+
 		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
 		ball.Draw()
 		terrain.Draw()
@@ -65,9 +73,6 @@ func main() {
 			for i := range elements {
 				for j := range elements {
 					if i == j {
-						continue
-					}
-					if elements[i] == elements[j] { //See why this happen!!! Error
 						continue
 					}
 					a, okA := elements[i].(base.Object)
@@ -81,17 +86,19 @@ func main() {
 		})
 		quad.DrawBorder()
 		camera.StopRendering()
+
+		r := base.GetModifierRef[*base.RigidBody](&ball)
 		if rl.IsKeyDown(rl.KeyS) {
-			terrain.MoveBy(base.NewVec[float32](0, 2))
+			r.ApplyAcceleration(base.NewVec[float32](0, 100))
 		}
 		if rl.IsKeyDown(rl.KeyD) {
-			terrain.MoveBy(base.NewVec[float32](2, 0))
+			r.ApplyAcceleration(base.NewVec[float32](100, 0))
 		}
 		if rl.IsKeyDown(rl.KeyA) {
-			terrain.MoveBy(base.NewVec[float32](-2, 0))
+			r.ApplyAcceleration(base.NewVec[float32](-100, 0))
 		}
 		if rl.IsKeyDown(rl.KeyW) {
-			terrain.MoveBy(base.NewVec[float32](0, -2))
+			r.ApplyAcceleration(base.NewVec[float32](0, -100))
 		}
 	}
 }

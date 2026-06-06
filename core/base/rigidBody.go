@@ -9,13 +9,31 @@ type RigidBody struct {
 	quadtree   *QuadTree
 	toSimulate bool
 	isStatic   bool
+
+	mass     float32
+	velocity Vec[float32]
+	force    Vec[float32]
 }
 
-func NewRigidBody(toSimulate, isStatic bool) RigidBody {
+func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
 	return RigidBody{
 		toSimulate: toSimulate,
 		isStatic:   isStatic,
+		mass:       mass,
 	}
+}
+
+func (r *RigidBody) GetForce() (res Vec[float32]) {
+	return r.force.Clone()
+}
+
+func (r *RigidBody) ApplyForce(v Vec[float32]) {
+	r.force.Add(v)
+}
+
+func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
+	v.MultScalar(r.mass)
+	r.force.Add(v)
 }
 
 func (r *RigidBody) SetObject(o Object) {
@@ -34,13 +52,46 @@ func (r *RigidBody) Move(v Vec[float32]) {
 	r.o.MoveBy(v)
 }
 
+func (r *RigidBody) Integrate(dt float32) {
+	if !r.toSimulate || r.isStatic {
+		return
+	}
+
+	acceleration := r.force.Clone()
+	acceleration.MultScalar(1.0 / r.mass)
+	acceleration.MultScalar(dt)
+	r.velocity.Add(acceleration)
+
+	displacement := r.velocity.Clone()
+	displacement.MultScalar(dt)
+	r.Move(displacement)
+
+	r.force = NewVec[float32](0, 0)
+}
+
 func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 	res := NewVec[float32](0, 0)
+
+	aToB := FromAtoBVec(a.o.GetPos(), b.o.GetPos())
+
 	if math.Abs(float64(v.X)) < math.Abs(float64(v.Y)) {
 		res.AddScalars(v.X, 0)
+		if math.Signbit(float64(res.X)) == math.Signbit(float64(aToB.X)) {
+			res.MultScalar(-1)
+		}
+		if math.Signbit(float64(a.velocity.X)) == math.Signbit(float64(aToB.X)) {
+			a.velocity.X = 0
+		}
 	} else {
 		res.AddScalars(0, v.Y)
+		if math.Signbit(float64(res.Y)) == math.Signbit(float64(aToB.Y)) {
+			res.MultScalar(-1)
+		}
+		if math.Signbit(float64(a.velocity.Y)) == math.Signbit(float64(aToB.Y)) {
+			a.velocity.Y = 0
+		}
 	}
+
 	a.Move(res)
 	return nil
 }
