@@ -69,6 +69,7 @@ func main() {
 		terrain.Draw()
 		block.Draw()
 		block1.Draw()
+		println("----")
 		quad.Query(func(elements []base.QuadTreeElement[float32]) {
 			for i := range elements {
 				for j := range elements {
