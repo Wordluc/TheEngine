@@ -1,7 +1,6 @@
 package base
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -81,7 +80,6 @@ func TestInsert_4Element(t *testing.T) {
 		elem(20, 30, 5, 5),
 	}
 	for _, e := range es {
-		fmt.Printf("%+v\n", e)
 		if err := q.Insert(e); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
