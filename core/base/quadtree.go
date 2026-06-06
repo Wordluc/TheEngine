@@ -55,34 +55,34 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 		switch where {
 		case TOP_LEFT:
 			if q.Top_left == nil {
-				q.Top_left = NewQuadTree(Vec[float32]{X: 0, Y: 0}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_left = NewQuadTree(Vec[float32]{X: xQ, Y: yQ}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_left.higherQuadTree = q
 			return q.Top_left, alreadyExist
 		case TOP_RIGHT:
 			if q.Top_right == nil {
-				q.Top_right = NewQuadTree(Vec[float32]{X: wQ / 2, Y: 0}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_right = NewQuadTree(Vec[float32]{X: xQ + wQ/2, Y: yQ}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_right.higherQuadTree = q
 			return q.Top_right, alreadyExist
 		case BOTTOM_LEFT:
 			if q.Bottom_left == nil {
-				q.Bottom_left = NewQuadTree(Vec[float32]{X: 0, Y: hQ / 2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_left = NewQuadTree(Vec[float32]{X: xQ, Y: yQ + hQ/2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_left.higherQuadTree = q
 			return q.Bottom_left, alreadyExist
 		case BOTTOM_RIGHT:
 			if q.Bottom_right == nil {
-				q.Bottom_right = NewQuadTree(Vec[float32]{X: wQ / 2, Y: hQ / 2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_right = NewQuadTree(Vec[float32]{X: xQ + wQ/2, Y: yQ + hQ/2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_right.higherQuadTree = q
 			return q.Bottom_right, alreadyExist
 		}
-		return nil, false
+		return nil, alreadyExist
 	}
 
 	elementsToReallocate := append(q.Elements, e)
@@ -127,23 +127,24 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 }
 
 func (q *QuadTree) subQuery(elements []QuadTreeElement[float32], forEach func(o []QuadTreeElement[float32])) {
+	elements = append(elements, q.Elements...)
 	if q.Top_left != nil {
-		q.Top_left.subQuery(append(elements, q.Elements...), forEach)
+		q.Top_left.subQuery(elements, forEach)
 	}
 	if q.Top_right != nil {
-		q.Top_right.subQuery(append(elements, q.Elements...), forEach)
+		q.Top_right.subQuery(elements, forEach)
 	}
 	if q.Bottom_left != nil {
-		q.Bottom_left.subQuery(append(elements, q.Elements...), forEach)
+		q.Bottom_left.subQuery(elements, forEach)
 	}
 	if q.Bottom_right != nil {
-		q.Bottom_right.subQuery(append(elements, q.Elements...), forEach)
+		q.Bottom_right.subQuery(elements, forEach)
 	}
-	forEach(append(elements, q.Elements...))
+	forEach(elements)
 }
 
 func (q *QuadTree) Query(forEach func([]QuadTreeElement[float32])) {
-	q.subQuery(q.Elements, forEach)
+	q.subQuery(nil, forEach)
 }
 
 func (q *QuadTree) Clear() {
@@ -166,8 +167,20 @@ func (q *QuadTree) Clear() {
 func (q *QuadTree) DrawBorder() {
 	if len(q.Elements) != 0 {
 		rl.DrawRectangleLines(int32(q.Pos.X), int32(q.Pos.Y), int32(q.Size.X), int32(q.Size.Y), rl.Red)
+		direction := ""
+		if q.higherQuadTree != nil {
+			if q.higherQuadTree.Bottom_right == q {
+				direction = "Bottom_right"
+			} else if q.higherQuadTree.Bottom_left == q {
+				direction = "Bottom_left"
+			} else if q.higherQuadTree.Top_right == q {
+				direction = "Top_right"
+			} else if q.higherQuadTree.Top_left == q {
+				direction = "Top_left"
+			}
+			rl.DrawText(direction, int32(q.Pos.X), int32(q.Pos.Y), 20, rl.Red)
+		}
 	}
-
 	if q.Top_left != nil {
 		q.Top_left.DrawBorder()
 	}
