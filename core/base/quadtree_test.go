@@ -1,32 +1,38 @@
 package base
 
 import (
+	"fmt"
 	"testing"
 )
 
 type MockElement struct {
-	*Hitbox
+	H  *Hitbox
+	P  Vec[float32]
 	qt *QuadTree
 }
 
+func (m *MockElement) GetPos() Vec[float32] {
+	return m.P
+}
 func (m *MockElement) GetHitbox() *Hitbox {
-	return m.Hitbox
+	return m.H
 }
 func (m *MockElement) SetQuadTree(q *QuadTree) { m.qt = q }
 func (m *MockElement) MoveBy(_ Vec[float32])   {}
 
 func elem(x, y, w, h float32) *MockElement {
 	hitbox := NewHitbox(w, h)
-	hitbox.Pos = new(Vec[float32]{X: x, Y: y})
+
 	return &MockElement{
-		Hitbox: &hitbox,
+		H: &hitbox,
+		P: Vec[float32]{X: x, Y: y},
 	}
 }
 
 func rootTree() *QuadTree {
-	center := Vec[float32]{X: 0, Y: 0}
+	pos := Vec[float32]{X: 0, Y: 0}
 	size := Vec[float32]{X: 50, Y: 50}
-	return NewQuadTree(center, size, nil)
+	return NewQuadTree(pos, size, nil)
 }
 
 func TestNewQuadTree_InitialisedCorrectly(t *testing.T) {
@@ -75,21 +81,19 @@ func TestInsert_4Element(t *testing.T) {
 		elem(20, 30, 5, 5),
 	}
 	for _, e := range es {
+		fmt.Printf("%+v\n", e)
 		if err := q.Insert(e); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	}
-
 	if len(q.Elements) != 0 {
-		t.Errorf("Element should't  be stored in the root quadtree")
+		t.Errorf("Elements should't be stored in the root quadtree")
 	}
-
 	if len(q.Top_left.Elements) != 3 {
-		t.Errorf("3 Elements should  be stored in the top_left quadtree")
+		t.Errorf("3 Elements should be stored in the top_left quadtree, got %d", len(q.Top_left.Elements))
 	}
-
 	if len(q.Bottom_left.Elements) != 1 {
-		t.Errorf("1 Elements should  be stored in the bottom_left quadtree")
+		t.Errorf("1 Element should be stored in the bottom_left quadtree, got %d", len(q.Bottom_left.Elements))
 	}
 }
 
