@@ -1,5 +1,7 @@
 package base
 
+import "errors"
+
 type Modifier interface {
 	SetObject(Object)
 }
@@ -33,6 +35,25 @@ func (o *ObjectBase) MoveTo(v Vec[float32]) {
 
 func (o *ObjectBase) MoveBy(v Vec[float32]) {
 	o.Pos.Add(v)
+}
+
+func UseModifierRef[t Modifier](o Object, c func(t)) error {
+	for _, m := range o.GetModifiers() {
+		if r, ok := m.(t); ok {
+			c(r)
+		}
+	}
+	return errors.New("Modifier not found")
+}
+
+func GetModifierRef[t Modifier](o Object) (r t) {
+	for _, m := range o.GetModifiers() {
+		if r, ok := m.(t); ok {
+			return r
+		}
+
+	}
+	return r
 }
 
 func (r *ObjectBase) GetHitbox() *Hitbox {
