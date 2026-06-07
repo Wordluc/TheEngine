@@ -12,6 +12,8 @@ type QuadTreeElement[t Number] interface {
 	GetHitbox() *Hitbox
 }
 
+var DEBUG = false
+
 type QuadTree struct {
 	Elements       []QuadTreeElement[float32]
 	Pos            Vec[float32]
@@ -139,6 +141,21 @@ func (q *QuadTree) subQuery(elements []QuadTreeElement[float32], forEach func(o 
 	}
 	if q.Bottom_right != nil {
 		q.Bottom_right.subQuery(elements, forEach)
+	}
+	if DEBUG {
+		var direction string
+		if q.higherQuadTree != nil {
+			if q.higherQuadTree.Bottom_right == q {
+				direction = "Bottom_right"
+			} else if q.higherQuadTree.Bottom_left == q {
+				direction = "Bottom_left"
+			} else if q.higherQuadTree.Top_right == q {
+				direction = "Top_right"
+			} else if q.higherQuadTree.Top_left == q {
+				direction = "Top_left"
+			}
+			fmt.Println(direction, "  ", len(elements))
+		}
 	}
 	forEach(elements)
 }
