@@ -10,9 +10,11 @@ type RigidBody struct {
 	toSimulate bool
 	isStatic   bool
 
-	mass     float32
-	velocity Vec[float32]
-	force    Vec[float32]
+	mass      float32
+	velocity  Vec[float32]
+	force     Vec[float32]
+	Collision Vec[float32]
+	touch     bool
 }
 
 func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
@@ -23,8 +25,16 @@ func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
 	}
 }
 
+func (r *RigidBody) Touch() {
+	r.touch = true
+}
+
 func (r *RigidBody) GetForce() (res Vec[float32]) {
 	return r.force.Clone()
+}
+
+func (r *RigidBody) GetVelocity() (res Vec[float32]) {
+	return r.velocity.Clone()
 }
 
 func (r *RigidBody) ApplyForce(v Vec[float32]) {
@@ -62,9 +72,7 @@ func (r *RigidBody) Integrate(dt float32) {
 	acceleration.MultScalar(dt)
 	r.velocity.Add(acceleration)
 
-	displacement := r.velocity.Clone()
-	displacement.MultScalar(dt)
-	r.Move(displacement)
+	r.Move(r.velocity)
 
 	r.force = NewVec[float32](0, 0)
 }
@@ -91,7 +99,7 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 			a.velocity.Y = 0
 		}
 	}
-
+	a.Collision.Add(res)
 	a.Move(res)
 	return nil
 }
@@ -120,6 +128,10 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	centerDistance = NewVec(float32(math.Abs(float64(centerDistance.X))), float32(math.Abs(float64(centerDistance.Y))))
 	totalSize := AddVecs(sizeA, sizeB)
 	distance := NewVec(centerDistance.X-totalSize.X/2, centerDistance.Y-totalSize.Y/2)
+	if a.touch {
+		a.Collision = Vec[float32]{}
+		a.touch = false
+	}
 	if distance.X < 0 && distance.Y < 0 {
 		return a.ResolveCollision(b, distance)
 	}

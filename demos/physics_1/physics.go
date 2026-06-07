@@ -50,12 +50,13 @@ func main() {
 			return
 		}
 		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
-			rb.ApplyAcceleration(base.NewVec[float32](0, 20))
+			rb.Touch()
+			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
 		})
 
 		base.UseModifierRef(&block, func(rb *base.RigidBody) {
-			rb.ApplyAcceleration(base.NewVec[float32](0, 20))
+			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
 		})
 		quad.Clear()
@@ -69,7 +70,41 @@ func main() {
 		terrain.Draw()
 		block.Draw()
 		block1.Draw()
-		println("----")
+
+		r := base.GetModifierRef[*base.RigidBody](&ball)
+		if rl.IsKeyDown(rl.KeyS) {
+			r.ApplyAcceleration(base.NewVec[float32](0, 5))
+		}
+		if rl.IsKeyDown(rl.KeyD) {
+			r.ApplyAcceleration(base.NewVec[float32](5, 0))
+		}
+		if rl.IsKeyDown(rl.KeyA) {
+			r.ApplyAcceleration(base.NewVec[float32](-5, 0))
+		}
+		if rl.IsKeyDown(rl.KeyW) && r.Collision.Y < 0 {
+			r.ApplyAcceleration(base.NewVec[float32](0, -70))
+		}
+
+		if r.GetForce().X == 0 {
+			func() {
+				f := r.GetVelocity()
+				f.Y = 0
+
+				dt := rl.GetFrameTime()
+				if dt == 0 {
+					return
+				}
+
+				t := f.X / dt
+				if r.Collision.Y < 0 {
+					f.X = t * -0.15
+				} else {
+					f.X = t * -0.1
+				}
+				r.ApplyAcceleration(f)
+			}()
+		}
+
 		quad.Query(func(elements []base.QuadTreeElement[float32]) {
 			for i := range elements {
 				for j := range elements {
@@ -88,18 +123,5 @@ func main() {
 		quad.DrawBorder()
 		camera.StopRendering()
 
-		r := base.GetModifierRef[*base.RigidBody](&ball)
-		if rl.IsKeyDown(rl.KeyS) {
-			r.ApplyAcceleration(base.NewVec[float32](0, 100))
-		}
-		if rl.IsKeyDown(rl.KeyD) {
-			r.ApplyAcceleration(base.NewVec[float32](100, 0))
-		}
-		if rl.IsKeyDown(rl.KeyA) {
-			r.ApplyAcceleration(base.NewVec[float32](-100, 0))
-		}
-		if rl.IsKeyDown(rl.KeyW) {
-			r.ApplyAcceleration(base.NewVec[float32](0, -100))
-		}
 	}
 }
