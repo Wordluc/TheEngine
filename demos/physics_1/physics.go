@@ -43,11 +43,22 @@ func main() {
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
-	rl.SetTargetFPS(30)
+	var FPS int32 = 30
+	rl.SetTargetFPS(FPS)
 	quad := base.NewQuadTree(base.NewVec[float32](0, 0), base.NewVec[float32](W_WINDOW, H_WINDOW), nil)
 	for {
 		if rl.WindowShouldClose() {
 			return
+		}
+		if rl.IsKeyPressed(rl.KeyLeft) {
+			FPS -= 30
+			rl.SetTargetFPS(FPS)
+			println(FPS)
+		}
+		if rl.IsKeyPressed(rl.KeyRight) {
+			FPS += 30
+			rl.SetTargetFPS(FPS)
+			println(FPS)
 		}
 		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
 			rb.Touch()
