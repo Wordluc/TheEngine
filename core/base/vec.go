@@ -20,37 +20,42 @@ func (v Vec[t]) Get() (t, t) {
 	return v.X, v.Y
 }
 
-func (v *Vec[t]) Clone() Vec[t] {
-	return Vec[t]{
+func (v *Vec[t]) Clone() *Vec[t] {
+	return &Vec[t]{
 		v.X,
 		v.Y,
 	}
 
 }
 
-func (v *Vec[t]) MultScalar(a t) {
+func (v *Vec[t]) MultScalar(a t) *Vec[t] {
 	v.X *= a
 	v.Y *= a
+	return v
 }
 
-func (v *Vec[t]) Add(a Vec[t]) {
+func (v *Vec[t]) Add(a Vec[t]) *Vec[t] {
 	v.X += a.X
 	v.Y += a.Y
+	return v
 }
 
-func (v *Vec[t]) Sub(a Vec[t]) {
+func (v *Vec[t]) Sub(a Vec[t]) *Vec[t] {
 	v.X -= a.X
 	v.Y -= a.Y
+	return v
 }
 
-func (v *Vec[t]) AddScalars(x, y t) {
+func (v *Vec[t]) AddScalars(x, y t) *Vec[t] {
 	v.X += x
 	v.Y += y
+	return v
 }
 
-func (v *Vec[t]) SubScalars(x, y t) {
+func (v *Vec[t]) SubScalars(x, y t) *Vec[t] {
 	v.X -= x
 	v.Y -= y
+	return v
 }
 
 func FromAtoBVec[t Number](a, b Vec[t]) Vec[t] {

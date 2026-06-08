@@ -73,16 +73,16 @@ func main() {
 
 		r := base.GetModifierRef[*base.RigidBody](&ball)
 		if rl.IsKeyDown(rl.KeyS) {
-			r.ApplyAcceleration(base.NewVec[float32](0, 5))
+			r.ApplyAcceleration(base.NewVec[float32](0, 10))
 		}
 		if rl.IsKeyDown(rl.KeyD) {
-			r.ApplyAcceleration(base.NewVec[float32](5, 0))
+			r.ApplyAcceleration(base.NewVec[float32](10, 0))
 		}
 		if rl.IsKeyDown(rl.KeyA) {
-			r.ApplyAcceleration(base.NewVec[float32](-5, 0))
+			r.ApplyAcceleration(base.NewVec[float32](-10, 0))
 		}
-		if rl.IsKeyDown(rl.KeyW) && r.Collision.Y < 0 {
-			r.ApplyAcceleration(base.NewVec[float32](0, -70))
+		if rl.IsKeyPressed(rl.KeyW) && r.Collision.Y < 0 {
+			r.ApplyImpulse(base.NewVec[float32](0, -7))
 		}
 
 		if r.GetForce().X == 0 {

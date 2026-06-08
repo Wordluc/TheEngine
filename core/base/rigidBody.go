@@ -30,15 +30,19 @@ func (r *RigidBody) Touch() {
 }
 
 func (r *RigidBody) GetForce() (res Vec[float32]) {
-	return r.force.Clone()
+	return *r.force.Clone()
 }
 
 func (r *RigidBody) GetVelocity() (res Vec[float32]) {
-	return r.velocity.Clone()
+	return *r.velocity.Clone()
 }
 
 func (r *RigidBody) ApplyForce(v Vec[float32]) {
 	r.force.Add(v)
+}
+
+func (r *RigidBody) ApplyImpulse(v Vec[float32]) {
+	r.velocity.Add(v)
 }
 
 func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
@@ -70,9 +74,8 @@ func (r *RigidBody) Integrate(dt float32) {
 	acceleration := r.force.Clone()
 	acceleration.MultScalar(1.0 / r.mass)
 	acceleration.MultScalar(dt)
-	r.velocity.Add(acceleration)
 
-	r.Move(r.velocity)
+	r.Move(*r.velocity.Add(*acceleration).Clone().MultScalar(dt * 10))
 
 	r.force = NewVec[float32](0, 0)
 }
