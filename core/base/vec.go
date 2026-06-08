@@ -29,11 +29,15 @@ func (v *Vec[t]) Clone() *Vec[t] {
 }
 
 func (v *Vec[t]) CapAt(a Vec[t]) *Vec[t] {
-	if v.X > a.X {
+	if v.X > 0 && v.X > a.X {
 		v.X = a.X
+	} else if v.X < 0 && v.X < -a.X {
+		v.X = -a.X
 	}
-	if v.Y > a.Y {
+	if v.Y > 0 && v.Y > a.Y {
 		v.Y = a.Y
+	} else if v.Y < 0 && v.Y < -a.Y {
+		v.Y = -a.Y
 	}
 	return v
 }
