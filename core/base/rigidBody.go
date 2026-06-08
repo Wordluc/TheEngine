@@ -40,12 +40,14 @@ func (r *RigidBody) Touch() {
 	r.touch = true
 }
 
-func (r *RigidBody) GetForce() (res Vec[float32]) {
-	return *r.force.Clone()
+// Return force reference
+func (r *RigidBody) GetForce() (res *Vec[float32]) {
+	return &r.force
 }
 
-func (r *RigidBody) GetVelocity() (res Vec[float32]) {
-	return *r.velocity.Clone()
+// Return velocity reference
+func (r *RigidBody) GetVelocity() (res *Vec[float32]) {
+	return &r.velocity
 }
 
 func (r *RigidBody) ApplyForce(v Vec[float32]) {

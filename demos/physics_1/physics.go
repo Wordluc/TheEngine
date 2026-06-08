@@ -53,11 +53,13 @@ func main() {
 			rb.Touch()
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
 		})
 
 		base.UseModifierRef(&block, func(rb *base.RigidBody) {
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
 		})
 		quad.Clear()
 		quad.Insert(&ball)
@@ -72,25 +74,32 @@ func main() {
 		block1.Draw()
 
 		r := base.GetModifierRef[*base.RigidBody](&ball)
+		isTouchingDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
 		if rl.IsKeyDown(rl.KeyS) {
 			r.ApplyAcceleration(base.NewVec[float32](0, 10))
 		}
 		if rl.IsKeyDown(rl.KeyD) {
-			r.ApplyAcceleration(base.NewVec[float32](10, 0))
+			var speed float32 = 10
+			if !isTouchingDown {
+				speed = 5
+			}
+			r.ApplyAcceleration(base.NewVec(speed, 0))
 		}
 		if rl.IsKeyDown(rl.KeyA) {
-			r.ApplyAcceleration(base.NewVec[float32](-10, 0))
+			var speed float32 = 10
+			if !isTouchingDown {
+				speed = 5
+			}
+			r.ApplyAcceleration(base.NewVec(-speed, 0))
 		}
-		isTouchingDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
 		if isTouchingDown {
 			if rl.IsKeyPressed(rl.KeyW) {
 				r.ApplyImpulse(base.NewVec[float32](0, -7))
 			}
 		}
-
 		if r.GetForce().X == 0 {
 			func() {
-				f := r.GetVelocity()
+				f := r.GetVelocity().Clone()
 				f.Y = 0
 
 				dt := rl.GetFrameTime()
@@ -104,7 +113,7 @@ func main() {
 				} else {
 					f.X = t * -0.1
 				}
-				r.ApplyAcceleration(f)
+				r.ApplyAcceleration(*f)
 			}()
 		}
 

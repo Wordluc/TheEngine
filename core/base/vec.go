@@ -28,6 +28,16 @@ func (v *Vec[t]) Clone() *Vec[t] {
 
 }
 
+func (v *Vec[t]) CapAt(a Vec[t]) *Vec[t] {
+	if v.X > a.X {
+		v.X = a.X
+	}
+	if v.Y > a.Y {
+		v.Y = a.Y
+	}
+	return v
+}
+
 func (v *Vec[t]) MultScalar(a t) *Vec[t] {
 	v.X *= a
 	v.Y *= a
