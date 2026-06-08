@@ -81,8 +81,11 @@ func main() {
 		if rl.IsKeyDown(rl.KeyA) {
 			r.ApplyAcceleration(base.NewVec[float32](-10, 0))
 		}
-		if rl.IsKeyPressed(rl.KeyW) && r.Collision.Y < 0 {
-			r.ApplyImpulse(base.NewVec[float32](0, -7))
+		isTouchingDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
+		if isTouchingDown {
+			if rl.IsKeyPressed(rl.KeyW) {
+				r.ApplyImpulse(base.NewVec[float32](0, -7))
+			}
 		}
 
 		if r.GetForce().X == 0 {
@@ -96,7 +99,7 @@ func main() {
 				}
 
 				t := f.X / dt
-				if r.Collision.Y < 0 {
+				if isTouchingDown {
 					f.X = t * -0.15
 				} else {
 					f.X = t * -0.1
@@ -105,7 +108,7 @@ func main() {
 			}()
 		}
 
-		quad.Query(func(elements []base.QuadTreeElement[float32]) {
+		quad.Query(func(elements []base.QuadTreeElement) {
 			for i := range elements {
 				for j := range elements {
 					if i == j {
@@ -116,7 +119,12 @@ func main() {
 					if !okA || !okB {
 						continue
 					}
-					a.GetModifiers()[0].(*base.RigidBody).Collide(b.GetModifiers()[0].(*base.RigidBody))
+					ra := base.GetModifierRef[*base.RigidBody](a)
+					rb := base.GetModifierRef[*base.RigidBody](b)
+					if ra == nil || rb == nil {
+						continue
+					}
+					ra.Collide(rb)
 				}
 			}
 		})

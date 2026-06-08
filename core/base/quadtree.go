@@ -7,7 +7,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-type QuadTreeElement[t Number] interface {
+type QuadTreeElement interface {
 	GetPos() Vec[float32]
 	GetHitbox() *Hitbox
 }
@@ -15,7 +15,7 @@ type QuadTreeElement[t Number] interface {
 var DEBUG = false
 
 type QuadTree struct {
-	Elements       []QuadTreeElement[float32]
+	Elements       []QuadTreeElement
 	Pos            Vec[float32]
 	Size           Vec[float32]
 	hasSub         bool
@@ -37,12 +37,12 @@ func NewQuadTree(pos, size Vec[float32], higher *QuadTree) *QuadTree {
 	res := QuadTree{}
 	res.Pos = pos
 	res.Size = size
-	res.Elements = make([]QuadTreeElement[float32], 0)
+	res.Elements = make([]QuadTreeElement, 0)
 	res.higherQuadTree = higher
 	return &res
 }
 
-func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
+func (q *QuadTree) Insert(e QuadTreeElement) error {
 	if len(q.Elements) < 3 && !q.hasSub {
 		q.Elements = append(q.Elements, e)
 		return nil
@@ -88,7 +88,7 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 	}
 
 	elementsToReallocate := append(q.Elements, e)
-	q.Elements = make([]QuadTreeElement[float32], 0)
+	q.Elements = make([]QuadTreeElement, 0)
 	for i := range elementsToReallocate {
 		e := elementsToReallocate[i]
 		pos := AddVecs(e.GetPos(), e.GetHitbox().GetPos())
@@ -128,7 +128,7 @@ func (q *QuadTree) Insert(e QuadTreeElement[float32]) error {
 	return nil
 }
 
-func (q *QuadTree) subQuery(elements []QuadTreeElement[float32], forEach func(o []QuadTreeElement[float32])) {
+func (q *QuadTree) subQuery(elements []QuadTreeElement, forEach func(o []QuadTreeElement)) {
 	elements = append(elements, q.Elements...)
 	if q.Top_left != nil {
 		q.Top_left.subQuery(elements, forEach)
@@ -160,7 +160,7 @@ func (q *QuadTree) subQuery(elements []QuadTreeElement[float32], forEach func(o 
 	forEach(elements)
 }
 
-func (q *QuadTree) Query(forEach func([]QuadTreeElement[float32])) {
+func (q *QuadTree) Query(forEach func([]QuadTreeElement)) {
 	q.subQuery(nil, forEach)
 }
 

@@ -2,7 +2,18 @@ package base
 
 import (
 	"math"
+	"slices"
 )
+
+type CollisionDetail struct {
+	Vec[float32]
+	o Object
+}
+type CollisionDetails []CollisionDetail
+
+func (c CollisionDetails) CheckIf(check func(CollisionDetail) bool) bool {
+	return slices.ContainsFunc(c, check)
+}
 
 type RigidBody struct {
 	o          Object
@@ -13,8 +24,8 @@ type RigidBody struct {
 	mass      float32
 	velocity  Vec[float32]
 	force     Vec[float32]
-	Collision Vec[float32]
 	touch     bool
+	Collision CollisionDetails
 }
 
 func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
@@ -102,7 +113,10 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 			a.velocity.Y = 0
 		}
 	}
-	a.Collision.Add(res)
+	a.Collision = append(a.Collision, CollisionDetail{
+		res,
+		b.o,
+	})
 	a.Move(res)
 	return nil
 }
@@ -132,7 +146,7 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	totalSize := AddVecs(sizeA, sizeB)
 	distance := NewVec(centerDistance.X-totalSize.X/2, centerDistance.Y-totalSize.Y/2)
 	if a.touch {
-		a.Collision = Vec[float32]{}
+		a.Collision = nil
 		a.touch = false
 	}
 	if distance.X < 0 && distance.Y < 0 {
