@@ -24,7 +24,6 @@ func main() {
 	terrain := core.NewRectangle(500, 5)
 	terrain.MoveTo(base.NewVec[float32](0, 200))
 	rTerrain := new(base.NewRigidBody(true, true, 0))
-	rTerrain.Friction = 2.5
 	terrain.SetModifier(rTerrain)
 
 	block := core.NewRectangle(150, 20)

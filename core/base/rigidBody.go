@@ -36,6 +36,7 @@ func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
 		toSimulate: toSimulate,
 		isStatic:   isStatic,
 		Mass:       mass,
+		Friction:   3,
 	}
 }
 
@@ -96,9 +97,10 @@ func (r *RigidBody) Integrate(dt float32) {
 
 	friction := func(r *RigidBody) {
 		var sign float32
-		if r.GetVelocity().X > 0 {
+		v := r.GetVelocity()
+		if v.X > 0 {
 			sign = 1
-		} else if r.GetVelocity().X < 0 {
+		} else if v.X < 0 {
 			sign = -1
 		} else {
 			return
@@ -119,6 +121,10 @@ func (r *RigidBody) Integrate(dt float32) {
 		}) {
 			f.Y = 0
 			r.ApplyForce(*f)
+		} else {
+			norm := v.Normalize()
+			magn := v.Magnitude()
+			r.ApplyForce(*norm.MultScalar(magn * magn * (-0.3)))
 		}
 
 	}

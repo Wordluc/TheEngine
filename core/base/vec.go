@@ -1,5 +1,7 @@
 package base
 
+import "math"
+
 type Number interface {
 	int32 | float32
 }
@@ -40,6 +42,21 @@ func (v *Vec[t]) CapAt(a Vec[t]) *Vec[t] {
 		v.Y = -a.Y
 	}
 	return v
+}
+
+func (v *Vec[t]) Magnitude() t {
+	return t(math.Sqrt(float64(v.X*v.X + v.Y*v.Y)))
+}
+
+func (v *Vec[t]) Normalize() *Vec[t] {
+	mag := v.Magnitude()
+	if mag == 0 {
+		return &Vec[t]{}
+	}
+	return &Vec[t]{
+		X: v.X / mag,
+		Y: v.Y / mag,
+	}
 }
 
 func (v *Vec[t]) MultScalar(a t) *Vec[t] {
