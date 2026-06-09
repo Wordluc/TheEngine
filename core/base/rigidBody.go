@@ -71,10 +71,6 @@ func (r *RigidBody) setObject(o Object) {
 	r.o = o
 }
 
-func (r *RigidBody) SetQuadTree(q *QuadTree) {
-	r.quadtree = q
-}
-
 func (r *RigidBody) GetHitbox() *Hitbox {
 	return r.o.GetHitbox()
 }
