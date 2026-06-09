@@ -105,7 +105,7 @@ func (r *RigidBody) Integrate(dt float32) {
 		}
 		f := r.GetForce().Clone()
 		if r.Collision.CheckIf(func(cd CollisionDetail) bool {
-			if cd.Y < 0 {
+			if cd.Y < 0 && f.Y > 0 {
 				f.X = f.Y * cd.r.Friction * (-sign)
 				return true
 			}
