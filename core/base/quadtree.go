@@ -98,13 +98,13 @@ func (q *QuadTree) Insert(e QuadTreeElement) error {
 		if x < centerX && y < centerY {
 			quadtreeToCreate = append(quadtreeToCreate, TOP_LEFT)
 		}
-		if x < centerX && y+h > centerY {
+		if x < centerX && y+h >= centerY {
 			quadtreeToCreate = append(quadtreeToCreate, BOTTOM_LEFT)
 		}
-		if x+w > centerX && y < centerY {
+		if x+w >= centerX && y < centerY {
 			quadtreeToCreate = append(quadtreeToCreate, TOP_RIGHT)
 		}
-		if x+w > centerX && y+h > centerY {
+		if x+w >= centerX && y+h >= centerY {
 			quadtreeToCreate = append(quadtreeToCreate, BOTTOM_RIGHT)
 		}
 		if len(quadtreeToCreate) == 0 {
