@@ -60,18 +60,6 @@ func main() {
 			rl.SetTargetFPS(FPS)
 			println(FPS)
 		}
-		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
-			rb.Touch()
-			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
-			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
-		})
-
-		base.UseModifierRef(&block, func(rb *base.RigidBody) {
-			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
-			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
-		})
 		quad.Clear()
 		quad.Insert(&ball)
 		quad.Insert(&terrain)
@@ -118,15 +106,27 @@ func main() {
 					return
 				}
 
-				t := f.X / dt
 				if isTouchingDown {
-					f.X = t * -0.15
+					f.X = f.X * -(3)
 				} else {
-					f.X = t * -0.1
+					f.X = f.X * -(1)
 				}
 				r.ApplyAcceleration(*f)
 			}()
 		}
+
+		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
+			rb.Touch()
+			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
+			rb.Integrate(rl.GetFrameTime())
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
+		})
+
+		base.UseModifierRef(&block, func(rb *base.RigidBody) {
+			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
+			rb.Integrate(rl.GetFrameTime())
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
+		})
 
 		quad.Query(func(elements []base.QuadTreeElement) {
 			for i := range elements {
