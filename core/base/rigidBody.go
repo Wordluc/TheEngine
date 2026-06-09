@@ -67,7 +67,7 @@ func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
 	r.force.Add(v)
 }
 
-func (r *RigidBody) SetObject(o Object) {
+func (r *RigidBody) setObject(o Object) {
 	r.o = o
 }
 

@@ -3,7 +3,7 @@ package base
 import "errors"
 
 type Modifier interface {
-	SetObject(Object)
+	setObject(Object)
 }
 
 type Drawable interface {
@@ -65,6 +65,6 @@ func (o *ObjectBase) GetModifiers() []Modifier {
 }
 
 func (o *ObjectBase) SetModifier(m Modifier) {
-	m.SetObject(o)
+	m.setObject(o)
 	o.Modifier = append(o.Modifier, m)
 }
