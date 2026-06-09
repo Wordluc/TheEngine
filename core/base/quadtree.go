@@ -128,19 +128,19 @@ func (q *QuadTree) Insert(e QuadTreeElement) error {
 	return nil
 }
 
-func (q *QuadTree) subQuery(elements []QuadTreeElement, forEach func(o []QuadTreeElement)) {
+func (q *QuadTree) foreach(elements []QuadTreeElement, forEach func(o []QuadTreeElement)) {
 	elements = append(elements, q.Elements...)
 	if q.Top_left != nil {
-		q.Top_left.subQuery(elements, forEach)
+		q.Top_left.foreach(elements, forEach)
 	}
 	if q.Top_right != nil {
-		q.Top_right.subQuery(elements, forEach)
+		q.Top_right.foreach(elements, forEach)
 	}
 	if q.Bottom_left != nil {
-		q.Bottom_left.subQuery(elements, forEach)
+		q.Bottom_left.foreach(elements, forEach)
 	}
 	if q.Bottom_right != nil {
-		q.Bottom_right.subQuery(elements, forEach)
+		q.Bottom_right.foreach(elements, forEach)
 	}
 	if DEBUG {
 		var direction string
@@ -160,8 +160,8 @@ func (q *QuadTree) subQuery(elements []QuadTreeElement, forEach func(o []QuadTre
 	forEach(elements)
 }
 
-func (q *QuadTree) Query(forEach func([]QuadTreeElement)) {
-	q.subQuery(nil, forEach)
+func (q *QuadTree) Foreach(forEach func([]QuadTreeElement)) {
+	q.foreach(nil, forEach)
 }
 
 func (q *QuadTree) Clear() {

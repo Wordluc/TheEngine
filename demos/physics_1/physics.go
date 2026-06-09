@@ -117,7 +117,7 @@ func main() {
 			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
 		})
 
-		quad.Query(func(elements []base.QuadTreeElement) {
+		quad.Foreach(func(elements []base.QuadTreeElement) {
 			for i := range elements {
 				for j := range elements {
 					if i == j {
