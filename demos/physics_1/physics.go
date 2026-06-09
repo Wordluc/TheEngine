@@ -24,6 +24,7 @@ func main() {
 	terrain := core.NewRectangle(500, 5)
 	terrain.MoveTo(base.NewVec[float32](0, 200))
 	rTerrain := new(base.NewRigidBody(true, true, 0))
+	rTerrain.Friction = 1
 	terrain.SetModifier(rTerrain)
 
 	block := core.NewRectangle(20, 20)
@@ -73,19 +74,25 @@ func main() {
 		block1.Draw()
 
 		r := base.GetModifierRef[*base.RigidBody](&ball)
+		if rl.IsKeyPressed(rl.KeyUp) {
+			r.Mass += 10
+		}
+		if rl.IsKeyPressed(rl.KeyDown) {
+			r.Mass -= 10
+		}
 		isTouchingDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
 		if rl.IsKeyDown(rl.KeyS) {
 			r.ApplyAcceleration(base.NewVec[float32](0, 10))
 		}
 		if rl.IsKeyDown(rl.KeyD) {
-			var speed float32 = 10
+			var speed float32 = 20
 			if !isTouchingDown {
 				speed = 5
 			}
 			r.ApplyAcceleration(base.NewVec(speed, 0))
 		}
 		if rl.IsKeyDown(rl.KeyA) {
-			var speed float32 = 10
+			var speed float32 = 20
 			if !isTouchingDown {
 				speed = 5
 			}
@@ -93,26 +100,8 @@ func main() {
 		}
 		if isTouchingDown {
 			if rl.IsKeyPressed(rl.KeyW) {
-				r.ApplyImpulse(base.NewVec[float32](0, -7))
+				r.ApplyImpulse(base.NewVec[float32](0, -40))
 			}
-		}
-		if r.GetForce().X == 0 {
-			func() {
-				f := r.GetVelocity().Clone()
-				f.Y = 0
-
-				dt := rl.GetFrameTime()
-				if dt == 0 {
-					return
-				}
-
-				if isTouchingDown {
-					f.X = f.X * -(3)
-				} else {
-					f.X = f.X * -(1)
-				}
-				r.ApplyAcceleration(*f)
-			}()
 		}
 
 		base.UseModifierRef(&ball, func(rb *base.RigidBody) {

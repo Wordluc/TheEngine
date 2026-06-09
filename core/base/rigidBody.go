@@ -3,11 +3,13 @@ package base
 import (
 	"math"
 	"slices"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type CollisionDetail struct {
 	Vec[float32]
-	o Object
+	r *RigidBody
 }
 type CollisionDetails []CollisionDetail
 
@@ -21,18 +23,19 @@ type RigidBody struct {
 	toSimulate bool
 	isStatic   bool
 
-	mass      float32
+	Mass      float32
 	velocity  Vec[float32]
 	force     Vec[float32]
 	touch     bool
 	Collision CollisionDetails
+	Friction  float32
 }
 
 func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
 	return RigidBody{
 		toSimulate: toSimulate,
 		isStatic:   isStatic,
-		mass:       mass,
+		Mass:       mass,
 	}
 }
 
@@ -55,11 +58,11 @@ func (r *RigidBody) ApplyForce(v Vec[float32]) {
 }
 
 func (r *RigidBody) ApplyImpulse(v Vec[float32]) {
-	r.velocity.Add(v)
+	r.force.Add(*v.MultScalar(1 / rl.GetFrameTime()))
 }
 
 func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
-	v.MultScalar(r.mass)
+	v.MultScalar(r.Mass)
 	r.force.Add(v)
 }
 
@@ -75,8 +78,15 @@ func (r *RigidBody) GetHitbox() *Hitbox {
 	return r.o.GetHitbox()
 }
 
-func (r *RigidBody) Move(v Vec[float32]) {
-	r.o.MoveBy(v)
+func (r *RigidBody) ComputeVelocity(dt float32) *Vec[float32] {
+	if !r.toSimulate || r.isStatic {
+		return nil
+	}
+
+	acceleration := r.force.Clone()
+	acceleration.MultScalar(1.0 / r.Mass)
+	acceleration.MultScalar(dt)
+	return r.velocity.Clone().Add(*acceleration)
 }
 
 func (r *RigidBody) Integrate(dt float32) {
@@ -84,12 +94,38 @@ func (r *RigidBody) Integrate(dt float32) {
 		return
 	}
 
-	acceleration := r.force.Clone()
-	acceleration.MultScalar(1.0 / r.mass)
-	acceleration.MultScalar(dt)
+	friction := func(r *RigidBody) {
+		var sign float32
+		if r.GetVelocity().X > 0 {
+			sign = 1
+		} else if r.GetVelocity().X < 0 {
+			sign = -1
+		} else {
+			return
+		}
+		f := r.GetForce().Clone()
+		if r.Collision.CheckIf(func(cd CollisionDetail) bool {
+			if cd.Y < 0 {
+				f.X = f.Y * cd.r.Friction * (-sign)
+				return true
+			}
+			return false
+		}) {
+			f.Y = 0
+			r.ApplyForce(*f)
+		}
 
-	r.Move(*r.velocity.Add(*acceleration).Clone().MultScalar(dt * 10))
+	}
 
+	vBefore := r.ComputeVelocity(dt)
+	friction(r)
+	vAfter := r.ComputeVelocity(dt)
+	if (vBefore.X == 0) || (vAfter.X > 0 && vBefore.X > 0) || (vAfter.X < 0 && vBefore.X < 0) {
+		r.velocity = *vAfter
+	} else {
+		r.velocity = Vec[float32]{}
+	}
+	r.o.MoveBy(*r.velocity.Clone().MultScalar(10 * dt))
 	r.force = NewVec[float32](0, 0)
 }
 
@@ -117,9 +153,9 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 	}
 	a.Collision = append(a.Collision, CollisionDetail{
 		res,
-		b.o,
+		b,
 	})
-	a.Move(res)
+	a.o.MoveBy(res)
 	return nil
 }
 
