@@ -24,12 +24,13 @@ func main() {
 	terrain := core.NewRectangle(500, 5)
 	terrain.MoveTo(base.NewVec[float32](0, 200))
 	rTerrain := new(base.NewRigidBody(true, true, 0))
-	rTerrain.Friction = 1
+	rTerrain.Friction = 2.5
 	terrain.SetModifier(rTerrain)
 
-	block := core.NewRectangle(20, 20)
-	block.MoveTo(base.NewVec[float32](60, 180))
+	block := core.NewRectangle(150, 20)
+	block.MoveTo(base.NewVec[float32](150, 180))
 	rBlock := new(base.NewRigidBody(true, true, 30))
+	rBlock.Friction = -1
 	block.SetModifier(rBlock)
 
 	block1 := core.NewRectangle(20, 20)
@@ -84,6 +85,11 @@ func main() {
 		if rl.IsKeyDown(rl.KeyS) {
 			r.ApplyAcceleration(base.NewVec[float32](0, 10))
 		}
+		if isTouchingDown {
+			if rl.IsKeyPressed(rl.KeyW) {
+				r.ApplyImpulse(base.NewVec[float32](0, -40))
+			}
+		}
 		if rl.IsKeyDown(rl.KeyD) {
 			var speed float32 = 20
 			if !isTouchingDown {
@@ -98,23 +104,18 @@ func main() {
 			}
 			r.ApplyAcceleration(base.NewVec(-speed, 0))
 		}
-		if isTouchingDown {
-			if rl.IsKeyPressed(rl.KeyW) {
-				r.ApplyImpulse(base.NewVec[float32](0, -40))
-			}
-		}
 
 		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
 			rb.Touch()
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
 		})
 
 		base.UseModifierRef(&block, func(rb *base.RigidBody) {
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 10, Y: 20})
+			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
 		})
 
 		quad.Query(func(elements []base.QuadTreeElement) {
