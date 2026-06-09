@@ -35,7 +35,7 @@ func main() {
 
 	block1 := core.NewRectangle(20, 20)
 	block1.MoveTo(base.NewVec[float32](40, 50))
-	rBlock1 := new(base.NewRigidBody(true, true, 30))
+	rBlock1 := new(base.NewRigidBody(true, false, 30))
 	block1.SetModifier(rBlock1)
 
 	camera := core.NewCamera(base.Vec[int32]{
@@ -112,7 +112,7 @@ func main() {
 			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
 		})
 
-		base.UseModifierRef(&block, func(rb *base.RigidBody) {
+		base.UseModifierRef(&block1, func(rb *base.RigidBody) {
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
 			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
