@@ -11,8 +11,8 @@ type MultiSprite struct {
 	spriteSheet       SpriteSheet
 	SpriteSheetOffset int
 	SelectedSprite    int8
-	BlockSize         base.Vec[int32]
-	SpriteSize        base.Vec[float32]
+	BlockSize         base.UVec[int32]
+	SpriteSize        base.UVec[float32]
 }
 
 func NewMultiSprite(spriteSheet SpriteSheet) (s MultiSprite) {

@@ -12,28 +12,28 @@ type Drawable interface {
 
 type Object interface {
 	GetHitbox() *Hitbox
-	MoveTo(Vec[float32])
-	MoveBy(Vec[float32])
-	GetPos() Vec[float32]
+	MoveTo(UVec[float32])
+	MoveBy(UVec[float32])
+	GetPos() UVec[float32]
 	SetModifier(Modifier)
 	GetModifiers() []Modifier
 }
 
 type ObjectBase struct {
-	Pos      Vec[float32]
+	Pos      UVec[float32]
 	Modifier []Modifier
 	Hitbox   *Hitbox
 }
 
-func (o *ObjectBase) GetPos() Vec[float32] {
+func (o *ObjectBase) GetPos() UVec[float32] {
 	return o.Pos
 }
 
-func (o *ObjectBase) MoveTo(v Vec[float32]) {
+func (o *ObjectBase) MoveTo(v UVec[float32]) {
 	o.Pos = v
 }
 
-func (o *ObjectBase) MoveBy(v Vec[float32]) {
+func (o *ObjectBase) MoveBy(v UVec[float32]) {
 	o.Pos.Add(v)
 }
 

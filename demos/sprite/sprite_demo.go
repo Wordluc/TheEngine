@@ -15,11 +15,11 @@ const (
 	H_WINDOW     = 720
 )
 
-var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
+var SPRITE_SIZE = base.UVec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
-	character := base.NewNode(base.Vec[float32]{})
+	character := base.NewNode(base.UVec[float32]{})
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
 		"walk": core.NewSpriteSheet("demos/sprite/walk.png", SPRITE_SIZE, 0),
 	})
@@ -38,11 +38,11 @@ func main() {
 	terrain.BlockSize.Y = 1
 	terrain.SelectedSprite = 13
 	terrain.SpriteSheetOffset = 2
-	terrain.MoveTo(base.Vec[float32]{X: 1, Y: 720 - 156.5})
-	camera := core.NewCamera(base.Vec[int32]{
+	terrain.MoveTo(base.UVec[float32]{X: 1, Y: 720 - 156.5})
+	camera := core.NewCamera(base.UVec[int32]{
 		X: W_RESOLUTION,
 		Y: H_RESOLUTION,
-	}, base.Vec[int32]{
+	}, base.UVec[int32]{
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
@@ -52,7 +52,7 @@ func main() {
 		if rl.WindowShouldClose() {
 			return
 		}
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering(base.CastVec[int32, float32](base.UVec[int32]{}))
 		_ = character.ForEachObjects(
 			func(o base.Object) error {
 				if d, ok := o.(base.Drawable); ok {

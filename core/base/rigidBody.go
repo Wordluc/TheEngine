@@ -8,7 +8,7 @@ import (
 )
 
 type CollisionDetail struct {
-	Vec[float32]
+	UVec[float32]
 	r *RigidBody
 }
 type CollisionDetails []CollisionDetail
@@ -24,8 +24,8 @@ type RigidBody struct {
 	isStatic   bool
 
 	Mass      float32
-	velocity  Vec[float32]
-	force     Vec[float32]
+	velocity  UVec[float32]
+	force     UVec[float32]
 	touch     bool
 	Collision CollisionDetails
 	Friction  float32
@@ -45,24 +45,24 @@ func (r *RigidBody) Touch() {
 }
 
 // Return force reference
-func (r *RigidBody) GetForce() (res *Vec[float32]) {
+func (r *RigidBody) GetForce() (res *UVec[float32]) {
 	return &r.force
 }
 
 // Return velocity reference
-func (r *RigidBody) GetVelocity() (res *Vec[float32]) {
+func (r *RigidBody) GetVelocity() (res *UVec[float32]) {
 	return &r.velocity
 }
 
-func (r *RigidBody) ApplyForce(v Vec[float32]) {
+func (r *RigidBody) ApplyForce(v UVec[float32]) {
 	r.force.Add(v)
 }
 
-func (r *RigidBody) ApplyImpulse(v Vec[float32]) {
+func (r *RigidBody) ApplyImpulse(v UVec[float32]) {
 	r.force.Add(*v.MultScalar(1 / rl.GetFrameTime()))
 }
 
-func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
+func (r *RigidBody) ApplyAcceleration(v UVec[float32]) {
 	r.force.Add(*v.MultScalar(r.Mass))
 }
 
@@ -74,7 +74,7 @@ func (r *RigidBody) GetHitbox() *Hitbox {
 	return r.o.GetHitbox()
 }
 
-func (r *RigidBody) ComputeVelocity(dt float32) *Vec[float32] {
+func (r *RigidBody) ComputeVelocity(dt float32) *UVec[float32] {
 	if !r.toSimulate || r.isStatic {
 		return nil
 	}
@@ -130,13 +130,13 @@ func (r *RigidBody) Integrate(dt float32) {
 	if (vBefore.X == 0) || (vAfter.X > 0 && vBefore.X > 0) || (vAfter.X < 0 && vBefore.X < 0) {
 		r.velocity = *vAfter
 	} else {
-		r.velocity = Vec[float32]{}
+		r.velocity = UVec[float32]{}
 	}
 	r.o.MoveBy(*r.velocity.Clone().MultScalar(10 * dt))
 	r.force = NewVec[float32](0, 0)
 }
 
-func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
+func (a *RigidBody) ResolveCollision(b *RigidBody, v UVec[float32]) error {
 	res := NewVec[float32](0, 0)
 
 	aToB := FromAtoBVec(a.o.GetPos(), b.o.GetPos())
@@ -183,8 +183,8 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	sizeA := hitboxA.GetBox()
 	sizeB := hitboxB.GetBox()
 
-	centerA := Vec[float32]{X: posA.X + sizeA.X/2, Y: posA.Y + sizeA.Y/2}
-	centerB := Vec[float32]{X: posB.X + sizeB.X/2, Y: posB.Y + sizeB.Y/2}
+	centerA := UVec[float32]{X: posA.X + sizeA.X/2, Y: posA.Y + sizeA.Y/2}
+	centerB := UVec[float32]{X: posB.X + sizeB.X/2, Y: posB.Y + sizeB.Y/2}
 
 	centerDistance := SubVecs(centerA, centerB)
 	centerDistance = NewVec(float32(math.Abs(float64(centerDistance.X))), float32(math.Abs(float64(centerDistance.Y))))

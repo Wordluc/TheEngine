@@ -23,10 +23,10 @@ func main() {
 
 	wall := core.NewRectangle(20, 20)
 
-	camera := core.NewCamera(base.Vec[int32]{
+	camera := core.NewCamera(base.UVec[int32]{
 		X: W_RESOLUTION,
 		Y: H_RESOLUTION,
-	}, base.Vec[int32]{
+	}, base.UVec[int32]{
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
@@ -50,7 +50,7 @@ func main() {
 			camera.SetScreenSize(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 		}
 
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering(base.CastVec[int32, float32](base.UVec[int32]{}))
 
 		ball.Draw()
 		wall.Draw()

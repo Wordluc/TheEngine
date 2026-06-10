@@ -6,31 +6,31 @@ import (
 
 type MockElement struct {
 	H  *Hitbox
-	P  Vec[float32]
+	P  UVec[float32]
 	qt *QuadTree
 }
 
-func (m *MockElement) GetPos() Vec[float32] {
+func (m *MockElement) GetPos() UVec[float32] {
 	return m.P
 }
 func (m *MockElement) GetHitbox() *Hitbox {
 	return m.H
 }
 func (m *MockElement) SetQuadTree(q *QuadTree) { m.qt = q }
-func (m *MockElement) MoveBy(_ Vec[float32])   {}
+func (m *MockElement) MoveBy(_ UVec[float32])  {}
 
 func elem(x, y, w, h float32) *MockElement {
 	hitbox := NewHitbox(w, h)
 
 	return &MockElement{
 		H: &hitbox,
-		P: Vec[float32]{X: x, Y: y},
+		P: UVec[float32]{X: x, Y: y},
 	}
 }
 
 func rootTree() *QuadTree {
-	pos := Vec[float32]{X: 0, Y: 0}
-	size := Vec[float32]{X: 50, Y: 50}
+	pos := UVec[float32]{X: 0, Y: 0}
+	size := UVec[float32]{X: 50, Y: 50}
 	return NewQuadTree(pos, size, nil)
 }
 

@@ -12,7 +12,7 @@ type Sprite struct {
 	currentSpriteSheet string
 	CurrentSprite      int8
 	_currentSprite     float32
-	SpriteSize         base.Vec[float32]
+	SpriteSize         base.UVec[float32]
 	SpeedSpriteLoop    float32
 }
 

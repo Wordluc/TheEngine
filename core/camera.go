@@ -7,13 +7,13 @@ import (
 )
 
 type Camera struct {
-	resolution base.Vec[int32]
-	screenSize base.Vec[int32]
+	resolution base.UVec[int32]
+	screenSize base.UVec[int32]
 	camera     *rl.Camera2D
 	view       rl.RenderTexture2D
 }
 
-func NewCamera(resolution base.Vec[int32], screenSize base.Vec[int32]) Camera {
+func NewCamera(resolution base.UVec[int32], screenSize base.UVec[int32]) Camera {
 	return Camera{
 		resolution: resolution,
 		screenSize: screenSize,
@@ -27,18 +27,18 @@ func NewCamera(resolution base.Vec[int32], screenSize base.Vec[int32]) Camera {
 }
 
 func (c *Camera) SetResolution(w, h int32) {
-	c.resolution = base.Vec[int32]{X: w, Y: h}
+	c.resolution = base.UVec[int32]{X: w, Y: h}
 	c.camera.Zoom = float32(c.resolution.X) / float32(c.screenSize.X)
 	rl.UnloadRenderTexture(c.view)
 	c.view = rl.LoadRenderTexture(w, h)
 }
 
 func (c *Camera) SetScreenSize(w, h int32) {
-	c.screenSize = base.Vec[int32]{X: w, Y: h}
+	c.screenSize = base.UVec[int32]{X: w, Y: h}
 	c.camera.Zoom = float32(c.resolution.X) / float32(c.screenSize.X)
 }
 
-func (c *Camera) StartRendering(pos base.Vec[float32]) {
+func (c *Camera) StartRendering(pos base.UVec[float32]) {
 	c.camera.Target = rl.Vector2{X: pos.X, Y: pos.Y}
 	rl.BeginTextureMode(c.view)
 	rl.ClearBackground(rl.White)

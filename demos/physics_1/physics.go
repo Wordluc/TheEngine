@@ -14,7 +14,7 @@ const (
 	H_WINDOW     = 720
 )
 
-var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
+var SPRITE_SIZE = base.UVec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
@@ -37,10 +37,10 @@ func main() {
 	rBlock1 := new(base.NewRigidBody(true, false, 30))
 	block1.SetModifier(rBlock1)
 
-	camera := core.NewCamera(base.Vec[int32]{
+	camera := core.NewCamera(base.UVec[int32]{
 		X: W_RESOLUTION,
 		Y: H_RESOLUTION,
-	}, base.Vec[int32]{
+	}, base.UVec[int32]{
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
@@ -67,7 +67,7 @@ func main() {
 		quad.Insert(&block)
 		quad.Insert(&block1)
 
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering(base.CastVec[int32, float32](base.UVec[int32]{}))
 		ball.Draw()
 		terrain.Draw()
 		block.Draw()
@@ -110,13 +110,13 @@ func main() {
 			rb.Touch()
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
+			rb.GetVelocity().CapAt(base.UVec[float32]{X: 20, Y: 20})
 		})
 
 		base.UseModifierRef(&block1, func(rb *base.RigidBody) {
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
-			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
+			rb.GetVelocity().CapAt(base.UVec[float32]{X: 20, Y: 20})
 		})
 
 		quad.Foreach(func(elements []base.QuadTreeElement) {

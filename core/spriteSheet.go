@@ -13,10 +13,10 @@ type SpriteSheet struct {
 	totalCols  int8
 	totalRows  int8
 	offset     int8
-	spriteSize base.Vec[float32]
+	spriteSize base.UVec[float32]
 }
 
-func NewSpriteSheet(path string, spriteSize base.Vec[float32], offset int8) utils.Result[SpriteSheet] {
+func NewSpriteSheet(path string, spriteSize base.UVec[float32], offset int8) utils.Result[SpriteSheet] {
 	texture := rl.LoadTexture(path)
 	if texture.Width == 0 {
 		return utils.ResultErr[SpriteSheet](fmt.Errorf("Error loading sprite '%v' ", path))

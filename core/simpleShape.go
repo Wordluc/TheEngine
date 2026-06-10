@@ -15,7 +15,7 @@ type Circle struct {
 func NewCircle(r int32) (b Circle) {
 	b.Hitbox = new(base.NewHitbox(float32(r*2), float32(r*2)))
 	b.r = float32(r)
-	b.Pos = base.Vec[float32]{}
+	b.Pos = base.UVec[float32]{}
 	return b
 }
 

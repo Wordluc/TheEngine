@@ -8,7 +8,7 @@ import (
 )
 
 type QuadTreeElement interface {
-	GetPos() Vec[float32]
+	GetPos() UVec[float32]
 	GetHitbox() *Hitbox
 }
 
@@ -16,8 +16,8 @@ var DEBUG = false
 
 type QuadTree struct {
 	Elements       []QuadTreeElement
-	Pos            Vec[float32]
-	Size           Vec[float32]
+	Pos            UVec[float32]
+	Size           UVec[float32]
 	hasSub         bool
 	higherQuadTree *QuadTree
 	Top_left       *QuadTree
@@ -33,7 +33,7 @@ const (
 	BOTTOM_RIGHT = "BOTTOM_RIGHT"
 )
 
-func NewQuadTree(pos, size Vec[float32], higher *QuadTree) *QuadTree {
+func NewQuadTree(pos, size UVec[float32], higher *QuadTree) *QuadTree {
 	res := QuadTree{}
 	res.Pos = pos
 	res.Size = size
@@ -57,28 +57,28 @@ func (q *QuadTree) Insert(e QuadTreeElement) error {
 		switch where {
 		case TOP_LEFT:
 			if q.Top_left == nil {
-				q.Top_left = NewQuadTree(Vec[float32]{X: xQ, Y: yQ}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_left = NewQuadTree(UVec[float32]{X: xQ, Y: yQ}, UVec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_left.higherQuadTree = q
 			return q.Top_left, alreadyExist
 		case TOP_RIGHT:
 			if q.Top_right == nil {
-				q.Top_right = NewQuadTree(Vec[float32]{X: xQ + wQ/2, Y: yQ}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Top_right = NewQuadTree(UVec[float32]{X: xQ + wQ/2, Y: yQ}, UVec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Top_right.higherQuadTree = q
 			return q.Top_right, alreadyExist
 		case BOTTOM_LEFT:
 			if q.Bottom_left == nil {
-				q.Bottom_left = NewQuadTree(Vec[float32]{X: xQ, Y: yQ + hQ/2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_left = NewQuadTree(UVec[float32]{X: xQ, Y: yQ + hQ/2}, UVec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_left.higherQuadTree = q
 			return q.Bottom_left, alreadyExist
 		case BOTTOM_RIGHT:
 			if q.Bottom_right == nil {
-				q.Bottom_right = NewQuadTree(Vec[float32]{X: xQ + wQ/2, Y: yQ + hQ/2}, Vec[float32]{X: wQ / 2, Y: hQ / 2}, q)
+				q.Bottom_right = NewQuadTree(UVec[float32]{X: xQ + wQ/2, Y: yQ + hQ/2}, UVec[float32]{X: wQ / 2, Y: hQ / 2}, q)
 				alreadyExist = false
 			}
 			q.Bottom_right.higherQuadTree = q
@@ -164,7 +164,7 @@ func (q *QuadTree) Foreach(forEach func([]QuadTreeElement)) {
 	q.foreach(nil, forEach)
 }
 
-func (q *QuadTree) query(elements []QuadTreeElement, pos Vec[float32]) []QuadTreeElement {
+func (q *QuadTree) query(elements []QuadTreeElement, pos UVec[float32]) []QuadTreeElement {
 
 	for _, element := range q.Elements {
 		if element.GetHitbox().IntersectsPoint(pos) {
@@ -202,7 +202,7 @@ func (q *QuadTree) query(elements []QuadTreeElement, pos Vec[float32]) []QuadTre
 	return elements
 }
 
-func (q *QuadTree) Query(elements []QuadTreeElement, pos Vec[float32]) []QuadTreeElement {
+func (q *QuadTree) Query(elements []QuadTreeElement, pos UVec[float32]) []QuadTreeElement {
 	return q.query(nil, pos)
 }
 
