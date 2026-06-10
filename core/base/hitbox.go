@@ -21,3 +21,9 @@ func (h *Hitbox) GetPos() Vec[float32] {
 func (h *Hitbox) GetBox() Vec[float32] {
 	return *h.Box
 }
+
+func (h *Hitbox) IntersectsPoint(p Vec[float32]) bool {
+	xMax, yMax := h.Pos.X+h.Box.X, h.Pos.Y+h.Box.Y
+
+	return p.X >= h.Pos.X && p.X <= xMax && p.Y >= p.Y && p.Y <= yMax
+}

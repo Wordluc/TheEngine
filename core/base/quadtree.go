@@ -164,6 +164,48 @@ func (q *QuadTree) Foreach(forEach func([]QuadTreeElement)) {
 	q.foreach(nil, forEach)
 }
 
+func (q *QuadTree) query(elements []QuadTreeElement, pos Vec[float32]) []QuadTreeElement {
+
+	for _, element := range q.Elements {
+		if element.GetHitbox().IntersectsPoint(pos) {
+			elements = append(elements, element)
+		}
+	}
+
+	if q.hasSub {
+		centerX, centerY := q.Pos.X+q.Size.X/2, q.Pos.Y+q.Size.Y/2
+		if pos.X < centerX && pos.Y < centerY {
+			if q.Top_left == nil {
+				return elements
+			}
+			return q.Top_left.query(elements, pos)
+		}
+		if pos.X < centerX && pos.Y >= centerY {
+			if q.Bottom_left == nil {
+				return elements
+			}
+			return q.Bottom_left.query(elements, pos)
+		}
+		if pos.X >= centerX && pos.Y < centerY {
+			if q.Top_right == nil {
+				return elements
+			}
+			return q.Top_right.query(elements, pos)
+		}
+		if pos.X >= centerX && pos.Y >= centerY {
+			if q.Bottom_right == nil {
+				return elements
+			}
+			return q.Bottom_right.query(elements, pos)
+		}
+	}
+	return elements
+}
+
+func (q *QuadTree) Query(elements []QuadTreeElement, pos Vec[float32]) []QuadTreeElement {
+	return q.query(nil, pos)
+}
+
 func (q *QuadTree) Clear() {
 	q.Elements = q.Elements[:0] // keep backing array
 
