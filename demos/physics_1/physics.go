@@ -54,12 +54,12 @@ func main() {
 		if rl.IsKeyPressed(rl.KeyLeft) {
 			FPS -= 30
 			rl.SetTargetFPS(FPS)
-			println(FPS)
+			println("FPS ", FPS)
 		}
 		if rl.IsKeyPressed(rl.KeyRight) {
 			FPS += 30
 			rl.SetTargetFPS(FPS)
-			println(FPS)
+			println("FPS ", FPS)
 		}
 		quad.Clear()
 		quad.Insert(&ball)
@@ -76,9 +76,11 @@ func main() {
 		r := base.GetModifierRef[*base.RigidBody](&ball)
 		if rl.IsKeyPressed(rl.KeyUp) {
 			r.Mass += 10
+			println("Mass ", r.Mass)
 		}
 		if rl.IsKeyPressed(rl.KeyDown) {
 			r.Mass -= 10
+			println("Mass ", r.Mass)
 		}
 		isTouchingDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
 		if rl.IsKeyDown(rl.KeyS) {
