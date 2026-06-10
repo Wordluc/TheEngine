@@ -65,6 +65,10 @@ func (v *Vec[t]) MultScalar(a t) *Vec[t] {
 	return v
 }
 
+func DotProduct[t Number](a, b Vec[t]) t {
+	return a.X*b.X + a.X*b.Y
+}
+
 func (v *Vec[t]) Add(a Vec[t]) *Vec[t] {
 	v.X += a.X
 	v.Y += a.Y
