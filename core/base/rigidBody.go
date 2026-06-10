@@ -36,7 +36,7 @@ func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
 		toSimulate: toSimulate,
 		isStatic:   isStatic,
 		Mass:       mass,
-		Friction:   3,
+		Friction:   5,
 	}
 }
 
@@ -63,8 +63,7 @@ func (r *RigidBody) ApplyImpulse(v Vec[float32]) {
 }
 
 func (r *RigidBody) ApplyAcceleration(v Vec[float32]) {
-	v.MultScalar(r.Mass)
-	r.force.Add(v)
+	r.force.Add(*v.MultScalar(r.Mass))
 }
 
 func (r *RigidBody) setObject(o Object) {
