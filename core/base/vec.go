@@ -97,8 +97,15 @@ func FromAtoBVec[t Number](a, b Vec[t]) Vec[t] {
 	return Vec[t]{X: b.X - a.X, Y: b.Y - a.Y}
 }
 
+func (v Vec[t]) Normal() Vec[t] {
+	return Vec[t]{X: -v.Y, Y: v.X}
+}
 func (v *Vec[t]) IsNull() bool {
 	return v.X == 0 && v.Y == 0
+}
+
+func (v *Vec[t]) IsEqual(a Vec[t]) bool {
+	return v.X == a.X && v.Y == a.Y
 }
 
 func SubVecs[t Number](a, b Vec[t]) Vec[t] {
@@ -107,11 +114,12 @@ func SubVecs[t Number](a, b Vec[t]) Vec[t] {
 		a.Y - b.Y,
 	}
 }
-func AddVecs[t Number](a, b Vec[t]) Vec[t] {
-	return Vec[t]{
-		a.X + b.X,
-		a.Y + b.Y,
+
+func AddVecs[t Number](v ...Vec[t]) (res Vec[t]) {
+	for i := range v {
+		res.Add(v[i])
 	}
+	return res
 }
 
 func CastVec[from, to Number](a Vec[from]) Vec[to] {

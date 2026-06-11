@@ -11,7 +11,7 @@ type Hitbox struct {
 	IsActive bool
 }
 
-func NewHitbox(w, h float32) Hitbox {
+func NewHitbox() Hitbox {
 	return Hitbox{
 		outerBox: new(NewVec[float32](0, 0)),
 		Pos:      new(NewVec[float32](0, 0)),
@@ -36,11 +36,11 @@ func (h *Hitbox) AppendVertex(x, y float32) *Hitbox {
 }
 
 func (h *Hitbox) ProjectionOn(posObject Vec[float32], v Vec[float32]) (min, max float32) {
+	pos := AddVecs(posObject, h.GetPos())
 	if len(h.vertex) == 0 {
 		return 0, 0
 	}
 
-	pos := AddVecs(posObject, h.GetPos())
 	vert := h.vertex[0].Clone().Add(pos)
 
 	initial := DotProduct(*vert, v)

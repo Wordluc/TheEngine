@@ -20,10 +20,10 @@ func (m *MockElement) SetQuadTree(q *QuadTree) { m.qt = q }
 func (m *MockElement) MoveBy(_ Vec[float32])   {}
 
 func elem(x, y, w, h float32) *MockElement {
-	hitbox := NewHitbox(w, h)
+	hitbox := new(NewHitbox()).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
 
 	return &MockElement{
-		H: &hitbox,
+		H: hitbox,
 		P: Vec[float32]{X: x, Y: y},
 	}
 }

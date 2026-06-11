@@ -170,13 +170,15 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 func getAxis(h *Hitbox, posObject Vec[float32]) (res []Vec[float32]) {
 	verts := h.GetVertex()
 	var a, b Vec[float32]
+	pos := AddVecs(posObject, *h.Pos)
 	for i := range verts {
-		pos := AddVecs(posObject, *h.Pos)
 		a = *verts[i].Clone().Add(pos)
 		b = *verts[(i+1)%len(verts)].Clone().Add(pos)
+		if a.IsEqual(b) {
+			continue
+		}
 		edge := FromAtoBVec(a, b)
-		normal := Vec[float32]{X: -edge.Y, Y: edge.X}
-		res = append(res, *normal.Normalize())
+		res = append(res, *edge.Normal().Normalize())
 	}
 	return res
 }
@@ -220,10 +222,12 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	}
 
 	axisA := getAxis(hitboxA, posA)
+	axisB := getAxis(hitboxB, posB)
+	axis := append(axisA, axisB...)
 	var minA, maxA, minB, maxB, dist float32
 	var minDist float32 = math.MaxFloat32
 	var axesToMove Vec[float32]
-	for _, axA := range axisA {
+	for _, axA := range axis {
 		minA, maxA = hitboxA.ProjectionOn(posA, axA)
 		minB, maxB = hitboxB.ProjectionOn(posB, axA)
 		dist = getOverlap(minA, maxA, minB, maxB)

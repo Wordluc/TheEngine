@@ -19,7 +19,7 @@ var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
-	ball := core.NewRectangle(20, 20)
+	ball := core.NewCircle(10)
 	rBall := new(base.NewRigidBody(true, false, 5))
 	ball.SetModifier(rBall)
 	rBall.Id = "ball"
@@ -39,6 +39,11 @@ func main() {
 	rBlock1 := new(base.NewRigidBody(true, false, 30))
 	block1.SetModifier(rBlock1)
 	rBlock1.Id = "block"
+
+	ramp := core.NewTriangle(20, 40)
+	ramp.MoveTo(base.NewVec[float32](180, 160))
+	rramp := new(base.NewRigidBody(true, true, 30))
+	ramp.SetModifier(rramp)
 
 	camera := core.NewCamera(base.Vec[int32]{
 		X: W_RESOLUTION,
@@ -69,6 +74,7 @@ func main() {
 		quad.Insert(&terrain)
 		quad.Insert(&block)
 		quad.Insert(&block1)
+		quad.Insert(&ramp)
 
 		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
 		ball.Draw()
@@ -80,6 +86,7 @@ func main() {
 		utils.DrawHitbox(&block)
 		utils.DrawHitbox(&block1)
 		utils.DrawHitbox(&terrain)
+		utils.DrawHitbox(&ramp)
 
 		r := base.GetModifierRef[*base.RigidBody](&ball)
 		if rl.IsKeyPressed(rl.KeyUp) {

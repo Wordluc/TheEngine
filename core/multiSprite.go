@@ -17,7 +17,7 @@ type MultiSprite struct {
 
 func NewMultiSprite(spriteSheet SpriteSheet) (s MultiSprite) {
 	s.spriteSheet = spriteSheet
-	s.Hitbox = new(base.NewHitbox(spriteSheet.spriteSize.X*float32(spriteSheet.totalCols), spriteSheet.spriteSize.Y*float32(spriteSheet.totalRows)))
+	s.Hitbox = new(base.NewHitbox())
 	return s
 }
 
