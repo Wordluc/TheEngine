@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"math"
 	"slices"
 
@@ -29,6 +30,7 @@ type RigidBody struct {
 	touch     bool
 	Collision CollisionDetails
 	Friction  float32
+	Id        string
 }
 
 func NewRigidBody(toSimulate, isStatic bool, mass float32) RigidBody {
@@ -141,7 +143,7 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 
 	aToB := FromAtoBVec(a.o.GetPos(), b.o.GetPos())
 
-	if math.Abs(float64(v.X)) < math.Abs(float64(v.Y)) {
+	if (v.X != 0 && math.Abs(float64(v.X)) < math.Abs(float64(v.Y))) || v.Y == 0 {
 		res.AddScalars(v.X, 0)
 		if math.Signbit(float64(res.X)) == math.Signbit(float64(aToB.X)) {
 			res.MultScalar(-1)
@@ -166,6 +168,32 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 	return nil
 }
 
+func getAxis(h *Hitbox, posObject Vec[float32]) (res []Vec[float32]) {
+	verts := h.GetVertex()
+	var a, b Vec[float32]
+	for i := range verts {
+		pos := AddVecs(posObject, *h.Pos)
+		a = *verts[i].Clone().Add(pos)
+		b = *verts[(i+1)%len(verts)].Clone().Add(pos)
+		edge := FromAtoBVec(a, b)
+		// perpendicular normal — rotate edge 90°
+		normal := Vec[float32]{X: -edge.Y, Y: edge.X}
+		res = append(res, *normal.Normalize())
+	}
+	return res
+}
+func getOverlap(minA, maxA, minB, maxB float32) float32 {
+	var AB, BA float32
+	AB = maxA - minB
+	BA = maxB - minA
+	if AB < 0 || BA < 0 {
+		return 0
+	}
+
+	return min(AB, BA)
+
+}
+
 func (a *RigidBody) Collide(b *RigidBody) error {
 	if !a.toSimulate || !b.toSimulate {
 		return nil
@@ -177,25 +205,47 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	hitboxA := a.o.GetHitbox()
 	hitboxB := b.o.GetHitbox()
 
-	posA := AddVecs(hitboxA.GetPos(), a.o.GetPos())
-	posB := AddVecs(hitboxB.GetPos(), b.o.GetPos())
+	posA := a.o.GetPos()
+	posB := b.o.GetPos()
 
-	sizeA := hitboxA.GetBox()
-	sizeB := hitboxB.GetBox()
+	sizeA := hitboxA.GetOuterBox()
+	sizeB := hitboxB.GetOuterBox()
 
-	centerA := Vec[float32]{X: posA.X + sizeA.X/2, Y: posA.Y + sizeA.Y/2}
-	centerB := Vec[float32]{X: posB.X + sizeB.X/2, Y: posB.Y + sizeB.Y/2}
-
-	centerDistance := SubVecs(centerA, centerB)
-	centerDistance = NewVec(float32(math.Abs(float64(centerDistance.X))), float32(math.Abs(float64(centerDistance.Y))))
-	totalSize := AddVecs(sizeA, sizeB)
-	distance := NewVec(centerDistance.X-totalSize.X/2, centerDistance.Y-totalSize.Y/2)
 	if a.touch {
 		a.Collision = nil
 		a.touch = false
 	}
-	if distance.X < 0 && distance.Y < 0 {
-		return a.ResolveCollision(b, distance)
+	if posA.X+sizeA.X < posB.X || posB.X+sizeB.X < posA.X ||
+		posA.Y+sizeA.Y < posB.Y || posB.Y+sizeB.Y < posA.Y {
+		return nil
 	}
+
+	axisA := getAxis(hitboxA, posA)
+	var minA, maxA, minB, maxB, dist float32
+	var err error
+	var minDist float32 = math.MaxFloat32
+	var axesToMove Vec[float32]
+	for _, axA := range axisA {
+		minA, maxA = hitboxA.ProjectionOn(posA, axA)
+		minB, maxB = hitboxB.ProjectionOn(posB, axA)
+		dist = getOverlap(minA, maxA, minB, maxB)
+		if dist == 0 {
+			return nil
+		}
+		if a.Id == "ball" && b.Id == "block" {
+			fmt.Printf("A %v %v %v %v\n", axA, minA, maxA, dist)
+		}
+		if math.Abs(float64(dist)) < math.Abs(float64(minDist)) {
+			axesToMove = *axA.MultScalar(dist)
+
+			minDist = dist
+		}
+
+	}
+	err = a.ResolveCollision(b, axesToMove)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

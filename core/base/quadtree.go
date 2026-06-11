@@ -93,7 +93,7 @@ func (q *QuadTree) Insert(e QuadTreeElement) error {
 		e := elementsToReallocate[i]
 		pos := AddVecs(e.GetPos(), e.GetHitbox().GetPos())
 		x, y := pos.Get()
-		w, h := e.GetHitbox().GetBox().Get()
+		w, h := e.GetHitbox().GetOuterBox().Get()
 		quadtreeToCreate := []string{}
 		if x < centerX && y < centerY {
 			quadtreeToCreate = append(quadtreeToCreate, TOP_LEFT)

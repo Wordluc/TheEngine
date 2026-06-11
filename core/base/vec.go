@@ -44,11 +44,11 @@ func (v *Vec[t]) CapAt(a Vec[t]) *Vec[t] {
 	return v
 }
 
-func (v *Vec[t]) Magnitude() t {
+func (v Vec[t]) Magnitude() t {
 	return t(math.Sqrt(float64(v.X*v.X + v.Y*v.Y)))
 }
 
-func (v *Vec[t]) Normalize() *Vec[t] {
+func (v Vec[t]) Normalize() *Vec[t] {
 	mag := v.Magnitude()
 	if mag == 0 {
 		return &Vec[t]{}
@@ -66,7 +66,7 @@ func (v *Vec[t]) MultScalar(a t) *Vec[t] {
 }
 
 func DotProduct[t Number](a, b Vec[t]) t {
-	return a.X*b.X + a.X*b.Y
+	return a.X*b.X + a.Y*b.Y
 }
 
 func (v *Vec[t]) Add(a Vec[t]) *Vec[t] {

@@ -3,6 +3,7 @@ package main
 import (
 	"game/core"
 	"game/core/base"
+	"game/core/utils"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -18,9 +19,10 @@ var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
-	ball := core.NewCircle(10)
+	ball := core.NewRectangle(20, 20)
 	rBall := new(base.NewRigidBody(true, false, 5))
 	ball.SetModifier(rBall)
+	rBall.Id = "ball"
 	terrain := core.NewRectangle(500, 5)
 	terrain.MoveTo(base.NewVec[float32](0, 200))
 	rTerrain := new(base.NewRigidBody(true, true, 0))
@@ -36,6 +38,7 @@ func main() {
 	block1.MoveTo(base.NewVec[float32](40, 50))
 	rBlock1 := new(base.NewRigidBody(true, false, 30))
 	block1.SetModifier(rBlock1)
+	rBlock1.Id = "block"
 
 	camera := core.NewCamera(base.Vec[int32]{
 		X: W_RESOLUTION,
@@ -72,6 +75,11 @@ func main() {
 		terrain.Draw()
 		block.Draw()
 		block1.Draw()
+
+		utils.DrawHitbox(&ball)
+		utils.DrawHitbox(&block)
+		utils.DrawHitbox(&block1)
+		utils.DrawHitbox(&terrain)
 
 		r := base.GetModifierRef[*base.RigidBody](&ball)
 		if rl.IsKeyPressed(rl.KeyUp) {
@@ -114,6 +122,7 @@ func main() {
 		})
 
 		base.UseModifierRef(&block1, func(rb *base.RigidBody) {
+			rb.Touch()
 			rb.ApplyAcceleration(base.NewVec[float32](0, 8))
 			rb.Integrate(rl.GetFrameTime())
 			rb.GetVelocity().CapAt(base.Vec[float32]{X: 20, Y: 20})
