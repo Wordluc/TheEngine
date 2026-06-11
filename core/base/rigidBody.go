@@ -1,7 +1,6 @@
 package base
 
 import (
-	"fmt"
 	"math"
 	"slices"
 
@@ -176,12 +175,12 @@ func getAxis(h *Hitbox, posObject Vec[float32]) (res []Vec[float32]) {
 		a = *verts[i].Clone().Add(pos)
 		b = *verts[(i+1)%len(verts)].Clone().Add(pos)
 		edge := FromAtoBVec(a, b)
-		// perpendicular normal — rotate edge 90°
 		normal := Vec[float32]{X: -edge.Y, Y: edge.X}
 		res = append(res, *normal.Normalize())
 	}
 	return res
 }
+
 func getOverlap(minA, maxA, minB, maxB float32) float32 {
 	var AB, BA float32
 	AB = maxA - minB
@@ -222,7 +221,6 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 
 	axisA := getAxis(hitboxA, posA)
 	var minA, maxA, minB, maxB, dist float32
-	var err error
 	var minDist float32 = math.MaxFloat32
 	var axesToMove Vec[float32]
 	for _, axA := range axisA {
@@ -232,20 +230,11 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 		if dist == 0 {
 			return nil
 		}
-		if a.Id == "ball" && b.Id == "block" {
-			fmt.Printf("A %v %v %v %v\n", axA, minA, maxA, dist)
-		}
 		if math.Abs(float64(dist)) < math.Abs(float64(minDist)) {
 			axesToMove = *axA.MultScalar(dist)
 
 			minDist = dist
 		}
-
 	}
-	err = a.ResolveCollision(b, axesToMove)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return a.ResolveCollision(b, axesToMove)
 }

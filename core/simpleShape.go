@@ -31,9 +31,7 @@ type Square struct {
 }
 
 func NewRectangle(w, h float32) (b Square) {
-	//b.Hitbox = new(base.NewHitbox(w, h)).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
-
-	b.Hitbox = new(base.NewHitbox(w, h)).AppendVertex(w, 0).AppendVertex(w+30, h/2).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
+	b.Hitbox = new(base.NewHitbox(w, h)).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
 	b.w = w
 	b.h = h
 	return b
