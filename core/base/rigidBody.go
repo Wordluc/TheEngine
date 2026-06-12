@@ -138,26 +138,24 @@ func (r *RigidBody) Integrate(dt float32) {
 }
 
 func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
-	res := NewVec[float32](0, 0)
 
 	aToB := FromAtoBVec(a.o.GetPos(), b.o.GetPos())
 
 	if (v.X != 0 && math.Abs(float64(v.X)) < math.Abs(float64(v.Y))) || v.Y == 0 {
-		res.AddScalars(v.X, 0)
-		if math.Signbit(float64(res.X)) == math.Signbit(float64(aToB.X)) {
-			res.MultScalar(-1)
-		}
 		if math.Signbit(float64(a.velocity.X)) == math.Signbit(float64(aToB.X)) {
 			a.velocity.X = 0
 		}
 	} else {
-		res.AddScalars(0, v.Y)
-		if math.Signbit(float64(res.Y)) == math.Signbit(float64(aToB.Y)) {
-			res.MultScalar(-1)
-		}
 		if math.Signbit(float64(a.velocity.Y)) == math.Signbit(float64(aToB.Y)) {
 			a.velocity.Y = 0
 		}
+	}
+	res := v
+	if math.Signbit(float64(res.X)) == math.Signbit(float64(aToB.X)) {
+		res.X *= -1
+	}
+	if math.Signbit(float64(res.Y)) == math.Signbit(float64(aToB.Y)) {
+		res.Y *= -1
 	}
 	a.Collision = append(a.Collision, CollisionDetail{
 		res,

@@ -41,7 +41,7 @@ func main() {
 	rBlock1.Id = "block"
 
 	ramp := core.NewTriangle(20, 40)
-	ramp.MoveTo(base.NewVec[float32](180, 160))
+	ramp.MoveTo(base.NewVec[float32](110, 180))
 	rramp := new(base.NewRigidBody(true, true, 30))
 	ramp.SetModifier(rramp)
 
