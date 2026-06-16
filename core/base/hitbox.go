@@ -61,17 +61,44 @@ func (h *Hitbox) ProjectionOn(posObject Vec[float32], v Vec[float32]) (min, max 
 }
 
 func (h *Hitbox) Rotate(angle float32) {
-	diff := h.angle - angle
+	diff := angle - h.angle
 	h.angle = angle
-	origin := *h.Pos.Clone().Add(Vec[float32]{X: h.outerBox.X / 2, Y: h.outerBox.Y / 2})
+
+	center := Vec[float32]{
+		X: h.outerBox.X / 2,
+		Y: h.outerBox.Y / 2,
+	}
+
+	h.vertex[0].rotate(center, diff)
+	minX, maxX := h.vertex[0].X, h.vertex[0].X
+	minY, maxY := h.vertex[0].Y, h.vertex[0].Y
+	for i := range h.vertex[1:] {
+		h.vertex[i].rotate(center, diff)
+		v := h.vertex[i]
+		if v.X < minX {
+			minX = v.X
+		}
+		if v.X > maxX {
+			maxX = v.X
+		}
+		if v.Y < minY {
+			minY = v.Y
+		}
+		if v.Y > maxY {
+			maxY = v.Y
+		}
+	}
+
+	// Pos absorbs the AABB shift so the shape stays visually centered
+	h.Pos.X += minX
+	h.Pos.Y += minY
+	h.outerBox.X = maxX - minX
+	h.outerBox.Y = maxY - minY
+
+	// Re-normalize vertices so minX/minY = 0 again
 	for i := range h.vertex {
-		h.vertex[i].rotate(origin, diff)
-		if h.outerBox.X < h.vertex[i].X {
-			h.outerBox.X = h.vertex[i].X
-		}
-		if h.outerBox.Y < h.vertex[i].Y {
-			h.outerBox.Y = h.vertex[i].Y
-		}
+		h.vertex[i].X -= minX
+		h.vertex[i].Y -= minY
 	}
 }
 
