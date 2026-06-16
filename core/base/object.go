@@ -14,6 +14,7 @@ type Object interface {
 	GetHitbox() *Hitbox
 	MoveTo(Vec[float32])
 	MoveBy(Vec[float32])
+	RotateBy(float32)
 	GetPos() Vec[float32]
 	SetModifier(Modifier)
 	GetModifiers() []Modifier
@@ -23,10 +24,16 @@ type ObjectBase struct {
 	Pos      Vec[float32]
 	Modifier []Modifier
 	Hitbox   *Hitbox
+	angle    float32
 }
 
 func (o *ObjectBase) GetPos() Vec[float32] {
 	return o.Pos
+}
+
+func (o *ObjectBase) RotateBy(angle float32) {
+	o.GetHitbox().Rotate(angle)
+	o.angle = angle
 }
 
 func (o *ObjectBase) MoveTo(v Vec[float32]) {

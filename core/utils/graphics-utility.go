@@ -14,7 +14,7 @@ func DrawHitbox(o base.Object) {
 	pos := o.GetPos()
 	pos.Add(*hitBox.Pos)
 	vertex := hitBox.GetVertex()
-	rl.DrawRectangleLinesEx(rl.Rectangle{X: float32(int32(pos.X)), Y: float32(int32(pos.Y)), Width: float32(hitBox.GetOuterBox().X), Height: float32(hitBox.GetOuterBox().Y)}, 1, rl.Blue)
+	//rl.DrawRectangleLinesEx(rl.Rectangle{X: float32(int32(pos.X)), Y: float32(int32(pos.Y)), Width: float32(hitBox.GetOuterBox().X), Height: float32(hitBox.GetOuterBox().Y)}, 1, rl.Blue)
 	if len(vertex) != 0 {
 		var currentV base.Vec[float32] = *vertex[0].Add(pos)
 		var nextV base.Vec[float32]

@@ -55,6 +55,7 @@ func main() {
 	var FPS int32 = 30
 	rl.SetTargetFPS(FPS)
 	quad := base.NewQuadTree(base.NewVec[float32](0, 0), base.NewVec[float32](W_WINDOW, H_WINDOW), nil)
+	var rotate float32 = 0
 	for {
 		if rl.WindowShouldClose() {
 			return
@@ -105,6 +106,10 @@ func main() {
 			if rl.IsKeyPressed(rl.KeyW) {
 				r.ApplyImpulse(base.NewVec[float32](0, -40))
 			}
+		}
+		if rl.IsKeyPressed(rl.KeyR) {
+			ball.RotateBy(rotate)
+			rotate += 10
 		}
 		if rl.IsKeyDown(rl.KeyD) {
 			var speed float32 = 20

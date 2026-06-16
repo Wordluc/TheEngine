@@ -9,6 +9,7 @@ type Hitbox struct {
 	Pos      *Vec[float32]
 	vertex   []Vec[float32]
 	IsActive bool
+	angle    float32
 }
 
 func NewHitbox() Hitbox {
@@ -57,6 +58,21 @@ func (h *Hitbox) ProjectionOn(posObject Vec[float32], v Vec[float32]) (min, max 
 		}
 	}
 	return min, max
+}
+
+func (h *Hitbox) Rotate(angle float32) {
+	diff := h.angle - angle
+	h.angle = angle
+	origin := *h.Pos.Clone().Add(Vec[float32]{X: h.outerBox.X / 2, Y: h.outerBox.Y / 2})
+	for i := range h.vertex {
+		h.vertex[i].rotate(origin, diff)
+		if h.outerBox.X < h.vertex[i].X {
+			h.outerBox.X = h.vertex[i].X
+		}
+		if h.outerBox.Y < h.vertex[i].Y {
+			h.outerBox.Y = h.vertex[i].Y
+		}
+	}
 }
 
 func (h *Hitbox) GetVertex() []Vec[float32] {

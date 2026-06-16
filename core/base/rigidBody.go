@@ -138,7 +138,9 @@ func (r *RigidBody) Integrate(dt float32) {
 }
 
 func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
-
+	if !slices.Contains([]float32{0, 90, 180, 270}, v.Angle()) {
+		v = Vec[float32]{Y: v.Magnitude()}
+	}
 	aToB := FromAtoBVec(a.o.GetPos(), b.o.GetPos())
 
 	if (v.X != 0 && math.Abs(float64(v.X)) < math.Abs(float64(v.Y))) || v.Y == 0 {

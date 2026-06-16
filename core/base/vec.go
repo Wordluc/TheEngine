@@ -48,6 +48,27 @@ func (v Vec[t]) Magnitude() t {
 	return t(math.Sqrt(float64(v.X*v.X + v.Y*v.Y)))
 }
 
+func (v *Vec[t]) rotate(origin Vec[t], angle float32) {
+	angle = (angle / 180) * math.Pi
+
+	cos := t(math.Cos(float64(angle)))
+	sin := t(math.Sin(float64(angle)))
+
+	pos := v.Clone().Sub(origin)
+
+	// Rotate
+	x := pos.X*cos - pos.Y*sin
+	y := pos.X*sin + pos.Y*cos
+
+	// Translate back
+	v.X = x + origin.X
+	v.Y = y + origin.Y
+}
+
+func (v Vec[t]) Angle() float32 {
+	return float32(math.Atan2(float64(v.Y), float64(v.X))) * (180 / math.Pi)
+}
+
 func (v Vec[t]) Normalize() *Vec[t] {
 	mag := v.Magnitude()
 	if mag == 0 {
