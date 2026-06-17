@@ -50,7 +50,7 @@ func main() {
 			camera.SetScreenSize(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 		}
 
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering()
 
 		ball.Draw()
 		wall.Draw()

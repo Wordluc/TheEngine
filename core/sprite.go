@@ -60,7 +60,7 @@ func (s *Sprite) SpriteLoop() {
 
 func (s *Sprite) Draw() {
 	spriteSheet := s.spriteSheets[s.currentSpriteSheet]
-	x, y := s.Pos.Get()
+	x, y := s.GetPos().Get()
 	size := spriteSheet.spriteSize
 	dest := rl.Rectangle{
 		X:      x,

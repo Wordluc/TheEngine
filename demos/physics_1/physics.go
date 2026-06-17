@@ -77,7 +77,7 @@ func main() {
 		quad.Insert(&block1)
 		quad.Insert(&ramp)
 
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering()
 		ball.Draw()
 		terrain.Draw()
 		block.Draw()

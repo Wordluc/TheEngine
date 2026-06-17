@@ -21,18 +21,20 @@ type Object interface {
 }
 
 type ObjectBase struct {
-	Pos      Vec[float32]
-	Modifier []Modifier
 	Hitbox   *Hitbox
+	pos      Vec[float32]
+	modifier []Modifier
 	angle    float32
 }
 
 func (o *ObjectBase) GetPos() Vec[float32] {
-	return o.Pos
+	return o.pos
 }
 
 func (o *ObjectBase) RotateBy(angle float32) {
-	o.GetHitbox().Rotate(angle)
+	if h := o.GetHitbox(); h != nil {
+		h.Rotate(angle)
+	}
 	o.angle = angle
 }
 
@@ -41,11 +43,11 @@ func (o *ObjectBase) Angle() float32 {
 }
 
 func (o *ObjectBase) MoveTo(v Vec[float32]) {
-	o.Pos = v
+	o.pos = v
 }
 
 func (o *ObjectBase) MoveBy(v Vec[float32]) {
-	o.Pos.Add(v)
+	o.pos.Add(v)
 }
 
 func UseModifierRef[t Modifier](o Object, c func(t)) error {
@@ -72,10 +74,10 @@ func (r *ObjectBase) GetHitbox() *Hitbox {
 }
 
 func (o *ObjectBase) GetModifiers() []Modifier {
-	return o.Modifier
+	return o.modifier
 }
 
 func (o *ObjectBase) SetModifier(m Modifier) {
 	m.setObject(o)
-	o.Modifier = append(o.Modifier, m)
+	o.modifier = append(o.modifier, m)
 }

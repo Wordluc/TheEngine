@@ -7,6 +7,7 @@ import (
 )
 
 type Camera struct {
+	base.ObjectBase
 	resolution base.Vec[int32]
 	screenSize base.Vec[int32]
 	camera     *rl.Camera2D
@@ -38,7 +39,8 @@ func (c *Camera) SetScreenSize(w, h int32) {
 	c.camera.Zoom = float32(c.resolution.X) / float32(c.screenSize.X)
 }
 
-func (c *Camera) StartRendering(pos base.Vec[float32]) {
+func (c *Camera) StartRendering() {
+	pos := c.GetPos()
 	c.camera.Target = rl.Vector2{X: pos.X, Y: pos.Y}
 	rl.BeginTextureMode(c.view)
 	rl.ClearBackground(rl.White)
@@ -56,7 +58,7 @@ func (c *Camera) StopRendering() {
 		rl.Rectangle{X: 0, Y: 0, Width: float32(c.resolution.X), Height: -float32(c.resolution.Y)},
 		rl.Rectangle{X: 0, Y: 0, Width: float32(c.screenSize.X), Height: -float32(c.screenSize.Y)},
 		rl.Vector2{},
-		0.0,
+		c.Angle(),
 		rl.White,
 	)
 	rl.EndDrawing()

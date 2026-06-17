@@ -49,7 +49,7 @@ func main() {
 		if rl.WindowShouldClose() {
 			return
 		}
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering()
 		_ = character.ForEachObjects(
 			func(o base.Object) error {
 				if d, ok := o.(base.Drawable); ok {

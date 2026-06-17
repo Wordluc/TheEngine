@@ -15,12 +15,11 @@ type Circle struct {
 func NewCircle(r float32) (b Circle) {
 	b.Hitbox = NewRectangle(r*2, r*2).Hitbox
 	b.r = float32(r)
-	b.Pos = base.Vec[float32]{}
 	return b
 }
 
 func (b *Circle) Draw() {
-	x, y := b.Pos.Get()
+	x, y := b.GetPos().Get()
 	rl.DrawCircle(int32(x+b.r), int32(y+b.r), b.r, rl.Black)
 }
 
@@ -42,7 +41,7 @@ func NewRectangle(w, h float32) (b Square) {
 }
 
 func (b *Square) Draw() {
-	x, y := b.Pos.Get()
+	x, y := b.GetPos().Get()
 	rl.DrawRectangle(int32(x), int32(y), int32(b.w), int32(b.h), rl.Black)
 }
 

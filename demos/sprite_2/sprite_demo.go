@@ -75,6 +75,15 @@ func main() {
 			}
 
 		})
+		if rl.IsKeyPressed(rl.KeyLeft) {
+			camera.MoveBy(base.Vec[float32]{X: -10})
+		}
+		if rl.IsKeyPressed(rl.KeyRight) {
+			camera.MoveBy(base.Vec[float32]{X: 10})
+		}
+		if rl.IsKeyPressed(rl.KeyR) {
+			camera.RotateBy(camera.Angle() + 10)
+		}
 		quad.Foreach(func(elements []base.QuadTreeElement) {
 			for i := range elements {
 				for j := range elements {
@@ -96,7 +105,7 @@ func main() {
 			}
 		})
 
-		camera.StartRendering(base.CastVec[int32, float32](base.Vec[int32]{}))
+		camera.StartRendering()
 
 		character.Draw()
 		terrain.Draw()

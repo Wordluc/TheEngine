@@ -27,7 +27,7 @@ func NewMultiSprite(spriteSheet SpriteSheet, blockSize base.Vec[int32]) (s Multi
 }
 
 func (s *MultiSprite) Draw() {
-	x, y := s.Pos.Get()
+	x, y := s.GetPos().Get()
 	source := s.spriteSheet.GetRectangle(s.SelectedSprite)
 	var i_y, i_x int32
 	size := s.spriteSize
