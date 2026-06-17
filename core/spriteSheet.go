@@ -41,26 +41,7 @@ func NewSpriteSheetWithTexture(texture rl.Texture2D, spriteSize base.Vec[float32
 
 func NewSpriteSheet(path string, spriteSize base.Vec[float32], offset base.Vec[float32], from, to int8) utils.Result[SpriteSheet] {
 	texture := rl.LoadTexture(path)
-	if texture.Width == 0 {
-		return utils.ResultErr[SpriteSheet](fmt.Errorf("Error loading texture '%v' ", path))
-	}
-	cols := int8(texture.Width / int32(spriteSize.X))
-	rows := int8(texture.Height / int32(spriteSize.Y))
-	if to == 0 {
-		to = cols * rows
-	}
-	if from > to {
-		return utils.ResultErr[SpriteSheet](fmt.Errorf("Error defining boundaries spriteSheet %v %v", from, to))
-	}
-	return utils.ResultOk(SpriteSheet{
-		Texture2D:  texture,
-		totalCols:  cols,
-		totalRows:  rows,
-		spriteSize: spriteSize,
-		offset:     offset,
-		from:       from,
-		to:         to,
-	})
+	return NewSpriteSheetWithTexture(texture, spriteSize, offset, from, to)
 }
 
 func (s SpriteSheet) GetTexture() rl.Texture2D {
