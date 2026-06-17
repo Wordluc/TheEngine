@@ -21,7 +21,7 @@ func NewMultiSprite(spriteSheet SpriteSheet, blockSize base.Vec[int32]) (s Multi
 	if s.spriteSize.IsNull() {
 		s.spriteSize = s.spriteSheet.spriteSize
 	}
-	s.Hitbox = GetRectangleHitbox(float32(s.blockSize.X)*s.spriteSize.X, float32(s.blockSize.Y)*s.spriteSize.Y)
+	s.Hitbox = GetRectangleHitbox(0, 0, float32(s.blockSize.X)*s.spriteSize.X, float32(s.blockSize.Y)*s.spriteSize.Y)
 
 	return s
 }

@@ -12,7 +12,7 @@ type QuadTreeElement interface {
 	GetHitbox() *Hitbox
 }
 
-var DEBUG = false
+var _DEBUG bool
 
 type QuadTree struct {
 	Elements       []QuadTreeElement
@@ -142,7 +142,7 @@ func (q *QuadTree) foreach(elements []QuadTreeElement, forEach func(o []QuadTree
 	if q.Bottom_right != nil {
 		q.Bottom_right.foreach(elements, forEach)
 	}
-	if DEBUG {
+	if _DEBUG {
 		var direction string
 		if q.higherQuadTree != nil {
 			if q.higherQuadTree.Bottom_right == q {
@@ -158,6 +158,10 @@ func (q *QuadTree) foreach(elements []QuadTreeElement, forEach func(o []QuadTree
 		}
 	}
 	forEach(elements)
+}
+
+func (q *QuadTree) DEBUG() {
+	_DEBUG = true
 }
 
 func (q *QuadTree) Foreach(forEach func([]QuadTreeElement)) {

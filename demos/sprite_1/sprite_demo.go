@@ -62,6 +62,5 @@ func main() {
 
 		character.MoveBy(utils.GetVecForKeyboard(100))
 		camera.StopRendering()
-		sp.SpriteLoop()
 	}
 }

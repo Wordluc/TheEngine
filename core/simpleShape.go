@@ -29,12 +29,14 @@ type Square struct {
 	h float32
 }
 
-func GetRectangleHitbox(w, h float32) *base.Hitbox {
-	return new(base.NewHitbox()).AppendVertex(0, 0).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
+func GetRectangleHitbox(x, y, w, h float32) *base.Hitbox {
+	hitbox := new(base.NewHitbox()).AppendVertex(0, 0).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
+	hitbox.Pos = new(base.NewVec[float32](x, y))
+	return hitbox
 }
 
 func NewRectangle(w, h float32) (b Square) {
-	b.Hitbox = GetRectangleHitbox(w, h)
+	b.Hitbox = GetRectangleHitbox(0, 0, w, h)
 	b.w = w
 	b.h = h
 	return b

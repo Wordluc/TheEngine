@@ -20,9 +20,7 @@ var SPRITE_SIZE = base.Vec[float32]{X: 156.5, Y: 156.5}
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 	ball := core.NewCircle(10)
-	rBall := new(base.NewRigidBody(true, false, 5))
-	ball.SetModifier(rBall)
-	rBall.Id = "ball"
+	ball.SetModifier(new(base.NewRigidBody(true, false, 5)))
 	terrain := core.NewRectangle(500, 5)
 	terrain.MoveTo(base.NewVec[float32](0, 200))
 	rTerrain := new(base.NewRigidBody(true, true, 0))

@@ -49,7 +49,7 @@ func (s *Sprite) ChanceSpriteSheet(spriteSheet string) error {
 	return nil
 }
 
-func (s *Sprite) SpriteLoop() {
+func (s *Sprite) spriteLoop() {
 	s._currentSprite = s._currentSprite + rl.GetFrameTime()*s.SpeedSpriteLoop
 	if int32(s._currentSprite)%2 == 0 {
 		spriteSheet := s.spriteSheets[s.currentSpriteSheet]
@@ -83,4 +83,5 @@ func (s *Sprite) Draw() {
 		0,
 		rl.White,
 	)
+	s.spriteLoop()
 }
