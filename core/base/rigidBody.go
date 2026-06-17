@@ -167,10 +167,9 @@ func (a *RigidBody) ResolveCollision(b *RigidBody, v Vec[float32]) error {
 	return nil
 }
 
-func getAxis(h *Hitbox, posObject Vec[float32]) (res []Vec[float32]) {
+func getAxis(h *Hitbox, pos Vec[float32]) (res []Vec[float32]) {
 	verts := h.GetVertex()
 	var a, b Vec[float32]
-	pos := AddVecs(posObject, *h.Pos)
 	for i := range verts {
 		a = *verts[i].Clone().Add(pos)
 		b = *verts[(i+1)%len(verts)].Clone().Add(pos)
@@ -206,8 +205,8 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 	hitboxA := a.o.GetHitbox()
 	hitboxB := b.o.GetHitbox()
 
-	posA := a.o.GetPos()
-	posB := b.o.GetPos()
+	posA := AddVecs(a.o.GetPos(), hitboxA.GetPos())
+	posB := AddVecs(b.o.GetPos(), hitboxB.GetPos())
 
 	sizeA := hitboxA.GetOuterBox()
 	sizeB := hitboxB.GetOuterBox()
@@ -216,8 +215,8 @@ func (a *RigidBody) Collide(b *RigidBody) error {
 		a.Collision = nil
 		a.touch = false
 	}
-	if posA.X+sizeA.X < posB.X || posB.X+sizeB.X < posA.X ||
-		posA.Y+sizeA.Y < posB.Y || posB.Y+sizeB.Y < posA.Y {
+	if posA.X+sizeA.X < posB.X || posA.X > posB.X+sizeB.X ||
+		posA.Y+sizeA.Y < posB.Y || posA.Y > posB.Y+sizeB.Y {
 		return nil
 	}
 
