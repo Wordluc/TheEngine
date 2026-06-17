@@ -20,9 +20,10 @@ var SPRITE_SIZE_CHARACTER = base.Vec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
+	texture := rl.LoadTexture("demos/sprite_2/walk.png")
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
-		"stop": core.NewSpriteSheet("demos/sprite_2/walk.png", SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 1),
-		"walk": core.NewSpriteSheet("demos/sprite_2/walk.png", SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 0),
+		"stop": core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 1),
+		"walk": core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 0),
 	})
 	if err != nil {
 		panic(err)
@@ -46,9 +47,9 @@ func main() {
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
-	camera.MoveBy(base.Vec[float32]{Y: -200})
+	camera.MoveBy(base.Vec[float32]{Y: -200, X: -200})
 	character.AddObject(&camera)
-	ball := core.NewCircle(10)
+	ball := core.NewCircle(50)
 	ball.SetModifier(new(base.NewRigidBody(true, false, 5)))
 	ball.MoveBy(base.NewVec[float32](300, 0))
 	rl.SetTargetFPS(30)
@@ -64,7 +65,15 @@ func main() {
 		quad.Insert(&character)
 		quad.Insert(&ball)
 		base.UseModifierRef(&character, func(r *base.RigidBody) {
-			r.ApplyAcceleration(utils.GetVecForKeyboard(100))
+			if rl.GetFrameTime() == 0 {
+				return
+			}
+			dist := new(utils.GetVecForKeyboard(int(1 / rl.GetFrameTime()))).MultScalar(10)
+			if dist.Y != 0 && r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 }) {
+				r.ApplyImpulse(base.Vec[float32]{Y: -400})
+			}
+			dist.Y = 0
+			r.ApplyAcceleration(*dist)
 			if r.GetVelocity().X != 0 {
 				character.ChanceSpriteSheet("walk")
 				if r.GetVelocity().X < 0 {
@@ -75,7 +84,8 @@ func main() {
 			} else {
 				character.ChanceSpriteSheet("stop")
 			}
-			r.ApplyAcceleration(base.Vec[float32]{Y: 8})
+			r.ApplyAcceleration(base.Vec[float32]{Y: 10})
+			r.Touch()
 			r.Integrate(rl.GetFrameTime())
 		})
 		base.UseModifierRef(&ball, func(rb *base.RigidBody) {
