@@ -21,6 +21,7 @@ var SPRITE_SIZE_CHARACTER = base.Vec[float32]{X: 156.5, Y: 156.5}
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
+		"stop": core.NewSpriteSheet("demos/sprite_2/walk.png", SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 1),
 		"walk": core.NewSpriteSheet("demos/sprite_2/walk.png", SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 0),
 	})
 	if err != nil {
@@ -59,10 +60,15 @@ func main() {
 			switch r := o.(type) {
 			case *base.RigidBody:
 				r.ApplyAcceleration(utils.GetVecForKeyboard(100))
-				if r.GetVelocity().X < 0 {
-					character.FlippedX = true
+				if r.GetVelocity().X != 0 {
+					character.ChanceSpriteSheet("walk")
+					if r.GetVelocity().X < 0 {
+						character.FlippedX = true
+					} else {
+						character.FlippedX = false
+					}
 				} else {
-					character.FlippedX = false
+					character.ChanceSpriteSheet("stop")
 				}
 				r.ApplyAcceleration(base.Vec[float32]{Y: 8})
 				r.Integrate(rl.GetFrameTime())

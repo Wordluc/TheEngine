@@ -49,6 +49,9 @@ func NewSpriteSheet(path string, spriteSize base.Vec[float32], offset base.Vec[f
 	if to == 0 {
 		to = cols * rows
 	}
+	if from > to {
+		return utils.ResultErr[SpriteSheet](fmt.Errorf("Error defining boundaries spriteSheet %v %v", from, to))
+	}
 	return utils.ResultOk(SpriteSheet{
 		Texture2D:  texture,
 		totalCols:  cols,
