@@ -25,6 +25,7 @@ type ObjectBase struct {
 	pos      Vec[float32]
 	modifier []Modifier
 	angle    float32
+	Node
 }
 
 func (o *ObjectBase) GetPos() Vec[float32] {
@@ -44,10 +45,20 @@ func (o *ObjectBase) Angle() float32 {
 
 func (o *ObjectBase) MoveTo(v Vec[float32]) {
 	o.pos = v
+	var diff Vec[float32]
+	o.ForEachObjects(func(o Object) error {
+		diff = SubVecs(v, o.GetPos())
+		o.MoveBy(diff)
+		return nil
+	})
 }
 
 func (o *ObjectBase) MoveBy(v Vec[float32]) {
 	o.pos.Add(v)
+	o.ForEachObjects(func(o Object) error {
+		o.MoveBy(v)
+		return nil
+	})
 }
 
 func UseModifierRef[t Modifier](o Object, c func(t)) error {

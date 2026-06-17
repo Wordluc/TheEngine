@@ -2,7 +2,6 @@ package core
 
 import (
 	"errors"
-	"fmt"
 	"game/core/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -39,7 +38,6 @@ func (s *Sprite) ChanceSpriteSheet(spriteSheet string) error {
 		return nil
 	}
 	if sheet, ok := s.spriteSheets[spriteSheet]; ok {
-		fmt.Println(s._currentSprite)
 		s.currentSpriteSheet = spriteSheet
 		s.currentSprite = sheet.from
 		s._currentSprite = 0

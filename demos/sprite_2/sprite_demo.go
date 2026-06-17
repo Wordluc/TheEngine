@@ -46,6 +46,8 @@ func main() {
 		X: W_WINDOW,
 		Y: H_WINDOW,
 	})
+	camera.MoveBy(base.Vec[float32]{Y: -200})
+	character.AddObject(&camera)
 	ball := core.NewCircle(10)
 	ball.SetModifier(new(base.NewRigidBody(true, false, 5)))
 	ball.MoveBy(base.NewVec[float32](300, 0))
@@ -117,7 +119,7 @@ func main() {
 		character.Draw()
 		terrain.Draw()
 		ball.Draw()
-		//	utils.DrawHitbox(&terrain)
+		utils.DrawHitbox(&terrain)
 		utils.DrawHitbox(&character)
 		utils.DrawHitbox(&ball)
 
