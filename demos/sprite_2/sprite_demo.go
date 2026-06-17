@@ -58,7 +58,12 @@ func main() {
 		base.UseModifierRef(&character, func(o base.Modifier) {
 			switch r := o.(type) {
 			case *base.RigidBody:
-				r.Touch()
+				r.ApplyAcceleration(utils.GetVecForKeyboard(100))
+				if r.GetVelocity().X < 0 {
+					character.FlippedX = true
+				} else {
+					character.FlippedX = false
+				}
 				r.ApplyAcceleration(base.Vec[float32]{Y: 8})
 				r.Integrate(rl.GetFrameTime())
 			}
@@ -92,7 +97,6 @@ func main() {
 		//	utils.DrawHitbox(&terrain)
 		//		utils.DrawHitbox(&character)
 
-		character.MoveBy(utils.GetVecForKeyboard(100))
 		camera.StopRendering()
 		character.SpriteLoop()
 	}

@@ -13,6 +13,8 @@ type Sprite struct {
 	CurrentSprite      int8
 	_currentSprite     float32
 	SpeedSpriteLoop    float32
+	FlippedY           bool
+	FlippedX           bool
 }
 
 func NewSprite(spriteSheetPaths map[string]SpriteSheet) (s Sprite) {
@@ -47,11 +49,18 @@ func (s *Sprite) Draw() {
 		X:      x,
 		Y:      y,
 		Width:  size.X,
-		Height: size.X,
+		Height: size.Y,
+	}
+	source := spriteSheet.GetRectangle(s.CurrentSprite)
+	if s.FlippedX {
+		source.Width = -source.Width
+	}
+	if s.FlippedY {
+		source.Height = -source.Height
 	}
 	rl.DrawTexturePro(
 		spriteSheet.Texture2D,
-		spriteSheet.GetRectangle(s.CurrentSprite),
+		source,
 		dest,
 		rl.Vector2{},
 		0,
