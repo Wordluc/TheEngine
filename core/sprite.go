@@ -34,10 +34,7 @@ func (s *Sprite) SpriteLoop() {
 	s._currentSprite = s._currentSprite + rl.GetFrameTime()*s.SpeedSpriteLoop
 	if int32(s._currentSprite)%2 == 0 {
 		spriteSheet := s.spriteSheets[s.currentSpriteSheet]
-		s.CurrentSprite = (s.CurrentSprite + 1) % spriteSheet.to
-		if s.CurrentSprite < spriteSheet.from {
-			s.CurrentSprite = spriteSheet.from
-		}
+		s.CurrentSprite = max((s.CurrentSprite+1)%spriteSheet.to, spriteSheet.from)
 		s._currentSprite++
 	}
 }
