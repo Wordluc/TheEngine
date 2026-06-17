@@ -12,7 +12,6 @@ type Sprite struct {
 	currentSpriteSheet string
 	CurrentSprite      int8
 	_currentSprite     float32
-	SpriteSize         base.Vec[float32]
 	SpeedSpriteLoop    float32
 }
 
@@ -28,13 +27,17 @@ func NewSprite(spriteSheetPaths map[string]SpriteSheet) (s Sprite) {
 }
 
 func (s *Sprite) GetHitbox() *base.Hitbox {
-	return nil
+	return s.Hitbox
 }
 
 func (s *Sprite) SpriteLoop() {
 	s._currentSprite = s._currentSprite + rl.GetFrameTime()*s.SpeedSpriteLoop
 	if int32(s._currentSprite)%2 == 0 {
-		s.CurrentSprite++
+		spriteSheet := s.spriteSheets[s.currentSpriteSheet]
+		s.CurrentSprite = (s.CurrentSprite + 1) % spriteSheet.to
+		if s.CurrentSprite < spriteSheet.from {
+			s.CurrentSprite = spriteSheet.from
+		}
 		s._currentSprite++
 	}
 }
@@ -42,13 +45,10 @@ func (s *Sprite) SpriteLoop() {
 func (s *Sprite) Draw() {
 	spriteSheet := s.spriteSheets[s.currentSpriteSheet]
 	x, y := s.Pos.Get()
-	size := s.SpriteSize
-	if size.IsNull() {
-		size = spriteSheet.spriteSize
-	}
+	size := spriteSheet.spriteSize
 	dest := rl.Rectangle{
-		X:      x + float32(size.X),
-		Y:      y + float32(size.Y),
+		X:      x,
+		Y:      y,
 		Width:  size.X,
 		Height: size.X,
 	}

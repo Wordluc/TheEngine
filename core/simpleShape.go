@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"game/core/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -31,8 +30,12 @@ type Square struct {
 	h float32
 }
 
+func GetRectangleHitbox(w, h float32) *base.Hitbox {
+	return new(base.NewHitbox()).AppendVertex(0, 0).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
+}
+
 func NewRectangle(w, h float32) (b Square) {
-	b.Hitbox = new(base.NewHitbox()).AppendVertex(0, 0).AppendVertex(w, 0).AppendVertex(w, h).AppendVertex(0, h).AppendVertex(0, 0)
+	b.Hitbox = GetRectangleHitbox(w, h)
 	b.w = w
 	b.h = h
 	return b
@@ -51,7 +54,6 @@ type Triangle struct {
 
 func NewTriangle(h, l float32) (b Triangle) {
 	b.Hitbox = new(base.NewHitbox()).AppendVertex(0, h).AppendVertex(l, h).AppendVertex(l, 0).AppendVertex(0, h)
-	fmt.Printf("%v\n", b.Hitbox.GetVertex())
 	b.h = h
 	b.l = l
 	return b

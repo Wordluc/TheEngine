@@ -11,13 +11,18 @@ type MultiSprite struct {
 	spriteSheet       SpriteSheet
 	SpriteSheetOffset int
 	SelectedSprite    int8
-	BlockSize         base.Vec[int32]
-	SpriteSize        base.Vec[float32]
+	blockSize         base.Vec[int32]
+	spriteSize        base.Vec[float32]
 }
 
-func NewMultiSprite(spriteSheet SpriteSheet) (s MultiSprite) {
+func NewMultiSprite(spriteSheet SpriteSheet, blockSize base.Vec[int32]) (s MultiSprite) {
 	s.spriteSheet = spriteSheet
-	s.Hitbox = new(base.NewHitbox())
+	s.blockSize = blockSize
+	if s.spriteSize.IsNull() {
+		s.spriteSize = s.spriteSheet.spriteSize
+	}
+	s.Hitbox = GetRectangleHitbox(float32(s.blockSize.X)*s.spriteSize.X, float32(s.blockSize.Y)*s.spriteSize.Y)
+
 	return s
 }
 
@@ -25,13 +30,13 @@ func (s *MultiSprite) Draw() {
 	x, y := s.Pos.Get()
 	source := s.spriteSheet.GetRectangle(s.SelectedSprite)
 	var i_y, i_x int32
-	size := s.SpriteSize
+	size := s.spriteSize
 	if size.IsNull() {
 		size = s.spriteSheet.spriteSize
 	}
 	var dest rl.Rectangle
-	for range s.BlockSize.Y {
-		for range s.BlockSize.X {
+	for range s.blockSize.Y {
+		for range s.blockSize.X {
 
 			dest.X = x + float32(i_x*int32(size.X))
 			dest.Y = y + float32(i_y*int32(size.Y))

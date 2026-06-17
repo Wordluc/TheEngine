@@ -21,7 +21,7 @@ func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 	character := base.NewNode(base.Vec[float32]{})
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
-		"walk": core.NewSpriteSheet("demos/sprite/walk.png", SPRITE_SIZE, 0),
+		"walk": core.NewSpriteSheet("demos/sprite_1/walk.png", SPRITE_SIZE, base.Vec[float32]{}, 0, 0),
 	})
 	if err != nil {
 		panic(err)
@@ -29,15 +29,12 @@ func main() {
 	sp := core.NewSprite(characterSprites)
 	sp.SpeedSpriteLoop = 6
 	character.AddObject(&sp)
-	terrainSprite, err := core.NewSpriteSheet("demos/sprite/terrain.png", SPRITE_SIZE, 2).Open()
+	terrainSprite, err := core.NewSpriteSheet("demos/sprite_1/terrain.png", SPRITE_SIZE, base.Vec[float32]{X: 1}, 0, 0).Open()
 	if err != nil {
 		panic(err)
 	}
-	terrain := core.NewMultiSprite(terrainSprite)
-	terrain.BlockSize.X = 5
-	terrain.BlockSize.Y = 1
+	terrain := core.NewMultiSprite(terrainSprite, base.NewVec[int32](5, 1))
 	terrain.SelectedSprite = 13
-	terrain.SpriteSheetOffset = 2
 	terrain.MoveTo(base.Vec[float32]{X: 1, Y: 720 - 156.5})
 	camera := core.NewCamera(base.Vec[int32]{
 		X: W_RESOLUTION,

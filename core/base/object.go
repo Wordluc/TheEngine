@@ -36,6 +36,10 @@ func (o *ObjectBase) RotateBy(angle float32) {
 	o.angle = angle
 }
 
+func (o *ObjectBase) Angle() float32 {
+	return o.angle
+}
+
 func (o *ObjectBase) MoveTo(v Vec[float32]) {
 	o.Pos = v
 }

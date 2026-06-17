@@ -89,13 +89,11 @@ func (h *Hitbox) Rotate(angle float32) {
 		}
 	}
 
-	// Pos absorbs the AABB shift so the shape stays visually centered
 	h.Pos.X += minX
 	h.Pos.Y += minY
 	h.outerBox.X = maxX - minX
 	h.outerBox.Y = maxY - minY
 
-	// Re-normalize vertices so minX/minY = 0 again
 	for i := range h.vertex {
 		h.vertex[i].X -= minX
 		h.vertex[i].Y -= minY
