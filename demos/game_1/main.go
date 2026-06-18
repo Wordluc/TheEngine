@@ -22,8 +22,9 @@ func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
 	texture := rl.LoadTexture("demos/sprite_2/walk.png")
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
-		"stop": core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 1),
-		"walk": core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 0, 0),
+		"stop":  core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 6, 7),
+		"walk":  core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 1, 0),
+		"inAir": core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 3, 4),
 	})
 	if err != nil {
 		panic(err)
@@ -49,7 +50,7 @@ func main() {
 	})
 	camera.MoveBy(base.Vec[float32]{Y: -200, X: -200})
 	character.AddObject(&camera)
-	ball := core.NewCircle(50)
+	ball := core.NewCircle(20)
 	ball.SetModifier(new(base.NewRigidBody(true, false, 5)))
 	ball.MoveBy(base.NewVec[float32](300, 0))
 	rl.SetTargetFPS(30)
@@ -68,23 +69,31 @@ func main() {
 			if rl.GetFrameTime() == 0 {
 				return
 			}
-			dist := new(utils.GetVecForKeyboard(int(1 / rl.GetFrameTime()))).MultScalar(10)
-			if dist.Y != 0 && r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 }) {
-				r.ApplyImpulse(base.Vec[float32]{Y: -400})
+			dist := new(utils.GetVecForKeyboard(int(1 / rl.GetFrameTime()))).MultScalar(40)
+			isDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
+			if dist.Y < 0 && isDown {
+				r.ApplyImpulse(base.Vec[float32]{Y: -500})
 			}
 			dist.Y = 0
 			r.ApplyAcceleration(*dist)
 			if r.GetVelocity().X != 0 {
-				character.ChanceSpriteSheet("walk")
 				if r.GetVelocity().X < 0 {
 					character.FlippedX = true
 				} else {
 					character.FlippedX = false
 				}
-			} else {
-				character.ChanceSpriteSheet("stop")
 			}
-			r.ApplyAcceleration(base.Vec[float32]{Y: 10})
+			if !isDown {
+				character.ChanceSpriteSheet("inAir")
+			} else {
+				if r.GetVelocity().X != 0 {
+					character.ChanceSpriteSheet("walk")
+				} else {
+					character.ChanceSpriteSheet("stop")
+				}
+			}
+			r.ApplyAcceleration(base.Vec[float32]{Y: 8})
+			r.GetVelocity().CapAt(base.Vec[float32]{X: 15, Y: 20})
 			r.Touch()
 			r.Integrate(rl.GetFrameTime())
 		})
@@ -129,9 +138,9 @@ func main() {
 		character.Draw()
 		terrain.Draw()
 		ball.Draw()
-		utils.DrawHitbox(&terrain)
-		utils.DrawHitbox(&character)
-		utils.DrawHitbox(&ball)
+		//		utils.DrawHitbox(&terrain)
+		//		utils.DrawHitbox(&character)
+		//		utils.DrawHitbox(&ball)
 
 		camera.StopRendering()
 	}
