@@ -20,7 +20,7 @@ var SPRITE_SIZE_CHARACTER = base.Vec[float32]{X: 156.5, Y: 156.5}
 
 func main() {
 	rl.InitWindow(W_WINDOW, H_WINDOW, "Ciao")
-	texture := rl.LoadTexture("demos/sprite_2/walk.png")
+	texture := rl.LoadTexture("demos/game_1/walk.png")
 	characterSprites, err := utils.ResultsMap(map[string]utils.Result[core.SpriteSheet]{
 		"stop":  core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 6, 7),
 		"walk":  core.NewSpriteSheetWithTexture(texture, SPRITE_SIZE_CHARACTER, base.Vec[float32]{}, 1, 0),
@@ -33,7 +33,7 @@ func main() {
 	character.Hitbox = core.GetRectangleHitbox(40, 0, 80, SPRITE_SIZE_CHARACTER.Y)
 	character.SpeedSpriteLoop = 6
 	character.SetModifier(new(base.NewRigidBody(true, false, 50)))
-	terrainSprite, err := core.NewSpriteSheet("demos/sprite_2/terrain.png", SPRITE_SIZE_TERRAIN, base.Vec[float32]{X: 1}, 0, 0).Open()
+	terrainSprite, err := core.NewSpriteSheet("demos/game_1/terrain.png", SPRITE_SIZE_TERRAIN, base.Vec[float32]{X: 1}, 0, 0).Open()
 	if err != nil {
 		panic(err)
 	}
