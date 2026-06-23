@@ -12,31 +12,27 @@ type Entity interface {
 	Update(dt float32) error
 }
 
-type SimpleEntity[opt any] struct {
+type SimpleEntity struct {
 	o      base.Object
-	opt    opt
 	update func(float32) error
-	start  func(opt opt) base.Object
 }
 
-func (s *SimpleEntity[opt]) Start() error {
-	s.o = s.start(s.opt)
+func (s *SimpleEntity) Start() error {
 	return nil
 }
 
-func (s *SimpleEntity[opt]) getObject() base.Object {
+func (s *SimpleEntity) getObject() base.Object {
 	return s.o
 }
 
-func (s *SimpleEntity[opt]) Update(dt float32) error {
+func (s *SimpleEntity) Update(dt float32) error {
 	return s.Update(dt)
 }
 
-func NewSimpleEntity[opt any](o base.Object, option opt, start func(opt opt) base.Object, update func(float32) error) *SimpleEntity[opt] {
-	return &SimpleEntity[opt]{
+func NewSimpleEntity(o base.Object, update func(float32) error) *SimpleEntity {
+	return &SimpleEntity{
 		o:      o,
 		update: update,
-		opt:    option,
 	}
 }
 
@@ -65,18 +61,18 @@ func (e *EntityEngine) RunEntitiesStarts() error {
 }
 
 func (e *EntityEngine) RunEntitiesUpdates() error {
-	dt := rl.GetFrameTime()
+	var (
+		obj base.Object
+		d   base.Drawable
+		ok  bool
+		dt  float32 = rl.GetFrameTime()
+	)
 	for i := range e.entities {
 		err := e.entities[i].Update(dt)
 		if err != nil {
 			return err
 		}
 	}
-	var (
-		obj base.Object
-		d   base.Drawable
-		ok  bool
-	)
 
 	for i := range e.entities {
 		obj = e.entities[i].getObject()
