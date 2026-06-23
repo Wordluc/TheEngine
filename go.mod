@@ -1,4 +1,4 @@
-module game
+module github.com/Wordluc/TheEngine
 
 go 1.26.0
 

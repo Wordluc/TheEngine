@@ -1,9 +1,9 @@
 package main
 
 import (
-	"game/core"
-	"game/core/base"
-	"game/core/utils"
+	"github.com/Wordluc/TheEngine/core"
+	"github.com/Wordluc/TheEngine/core/base"
+	"github.com/Wordluc/TheEngine/core/utils"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )

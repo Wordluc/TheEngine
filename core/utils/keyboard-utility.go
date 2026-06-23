@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"game/core/base"
+	"github.com/Wordluc/TheEngine/core/base"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
