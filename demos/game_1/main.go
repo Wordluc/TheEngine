@@ -69,7 +69,7 @@ func main() {
 			if rl.GetFrameTime() == 0 {
 				return
 			}
-			dist := new(utils.GetVecForKeyboard(int(1 / rl.GetFrameTime()))).MultScalar(40)
+			dist := new(utils.GetVecForKeyboard(1 / rl.GetFrameTime())).MultScalar(40)
 			isDown := r.Collision.CheckIf(func(cd base.CollisionDetail) bool { return cd.Y < 0 })
 			if dist.Y < 0 && isDown {
 				r.ApplyImpulse(base.Vec[float32]{Y: -500})
